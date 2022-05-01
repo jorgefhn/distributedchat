@@ -1,5 +1,7 @@
 from enum import Enum
 import argparse
+import socket
+import sys
 
 class client :
 
@@ -21,11 +23,32 @@ class client :
     # * 
     # * @return OK if successful
     # * @return USER_ERROR if the user is already registered
-    # * @return ERROR if another error occurred
+    # * @return ERROR if another error occurred 
+
+
+
+    
+       
+
+
     @staticmethod
-    def  register(user) :
+    def  register(user,host,port) :
         #  Write your code here
-        return client.RC.ERROR
+        
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = (host,int(port))
+        print('connecting to {} port {}'.format(*server_address))
+        sock.connect(server_address)
+        try:
+            sock.sendall(str(user).encode())
+            sock.sendall(b'\0')
+
+        
+        finally:
+            print("Closing socket")
+            sock.close()
+
+            return client.RC.ERROR
 
     # *
     # 	 * @param user - User name to unregister from the system
@@ -93,6 +116,13 @@ class client :
     @staticmethod
     def shell():
 
+        host = sys.argv[2]
+        port = sys.argv[4]
+
+        print("Host: ",host)
+        print("Port: ",port)
+
+
         while (True) :
             try :
                 command = input("c> ")
@@ -103,7 +133,7 @@ class client :
 
                     if (line[0]=="REGISTER") :
                         if (len(line) == 2) :
-                            client.register(line[1])
+                            client.register(line[1],host,port)
                         else :
                             print("Syntax error. Usage: REGISTER <userName>")
 
