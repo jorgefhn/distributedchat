@@ -48,8 +48,7 @@ class client :
         return a
 
     @staticmethod
-    def  register(user,host,port) :
-        #  Write your code here
+    def register(user,host,port):
         
         sock = client.openSocket(host,port)
         
@@ -65,7 +64,7 @@ class client :
             sock.sendall(str(user).encode())
             sock.sendall(b'\0')
 
-            print("Usuario",client.readResponse(sock),"enviado con éxito")
+            print("Usuario",client.readResponse(sock),"registrado con éxito")
 
         
         finally:
@@ -81,9 +80,29 @@ class client :
     # 	 * @return USER_ERROR if the user does not exist
     # 	 * @return ERROR if another error occurred
     @staticmethod
-    def  unregister(user) :
-        #  Write your code here
-        return client.RC.ERROR
+    def unregister(user,host,port):
+
+        sock = client.openSocket(host,port)
+
+        try:
+        #mandamos codigo de operación con nombre
+            sock.sendall("0\0".encode())
+            sock.sendall(b'\0')
+
+            #recibimos respuesta
+            print("La operación a realizar es: ",client.readResponse(sock))
+
+            #enviamos usuario
+            sock.sendall(str(user).encode())
+            sock.sendall(b'\0')
+
+            print("Usuario",client.readResponse(sock),"quitado del registro con éxito")
+
+        
+        finally:
+            print("Closing socket")
+            sock.close()
+            return client.RC.ERROR
 
 
     # *
@@ -163,7 +182,7 @@ class client :
 
                     elif(line[0]=="UNREGISTER") :
                         if (len(line) == 2) :
-                            client.unregister(line[1])
+                            client.unregister(line[1],host,port)
                         else :
                             print("Syntax error. Usage: UNREGISTER <userName>")
 
