@@ -27,21 +27,45 @@ class client :
 
 
 
-    
-       
 
+    @staticmethod
+    def openSocket(host,port):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = (host,int(port))
+        print('connecting to {} port {}'.format(*server_address))
+        sock.connect(server_address)
+        return sock
+    
+    @staticmethod
+    def readResponse(sock):
+        a = ''
+        while True:
+            msg = sock.recv(1)
+            if (msg == b'\0'):
+                break;
+            a += msg.decode()
+
+        return a
 
     @staticmethod
     def  register(user,host,port) :
         #  Write your code here
         
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_address = (host,int(port))
-        print('connecting to {} port {}'.format(*server_address))
-        sock.connect(server_address)
+        sock = client.openSocket(host,port)
+        
         try:
+            #mandamos codigo de operación con nombre
+            sock.sendall("0\0".encode())
+            sock.sendall(b'\0')
+
+            #recibimos respuesta
+            print("La operación a realizar es: ",client.readResponse(sock))
+
+            #enviamos usuario
             sock.sendall(str(user).encode())
             sock.sendall(b'\0')
+
+            print("Usuario",client.readResponse(sock),"enviado con éxito")
 
         
         finally:

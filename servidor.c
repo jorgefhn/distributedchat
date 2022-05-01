@@ -28,7 +28,20 @@ void tratar_peticion (void *s){
                         printf("Error en el servidor");
                         break; 
                 }
-                printf("%s\n", buffer);
+
+                printf("Buffer recibido: %s\n",buffer);
+                if (strcpy(buffer,"0") != 0){
+                    //enviamos confirmación
+                    strcpy(buffer,"Registro");
+                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
+                    
+                    //obtenemos usuario
+                    if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
+                    //enviamos confirmación
+                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
+
+                    printf("Vamos a registrar al usuario: %s\n",buffer);
+                }
 
                 //sendmessage
                 int err = sendMessage(sc, buffer, strlen(buffer)+1);  // envía el resultado
