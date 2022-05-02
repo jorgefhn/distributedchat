@@ -64,7 +64,12 @@ class client :
             sock.sendall(str(user).encode())
             sock.sendall(b'\0')
 
-            print("Usuario",client.readResponse(sock),"registrado con éxito")
+            r = client.readResponse(sock) #respuesta
+            if r == 0:
+                print("Usuario registrado con éxito")
+            
+            if r == 1:
+                print("Usuario ya existe")
 
         
         finally:

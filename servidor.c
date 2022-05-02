@@ -9,6 +9,7 @@
 #include "linked-list.h"
 #include <pthread.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #define NUM_THREADS 10
 pthread_mutex_t m;
@@ -24,6 +25,8 @@ void tratar_peticion (void *s){
         busy = false;
         pthread_cond_signal(&c);
         pthread_mutex_unlock(&m);
+        char result[256];
+        int r;
 
         while(1){
                 int n = readLine(sc, buffer, 256); 
@@ -47,14 +50,26 @@ void tratar_peticion (void *s){
                     if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
                     printf("Vamos a registrar al usuario: %s\n",buffer);
 
+                
+                    if (nodoExiste(cabeza,buffer) == 1){
+                        printf("usuario %s ya está registrado\n",buffer);
+                        strcpy(result,"1"); //ya existe un usuario registrado con ese nombre
+                    }
 
+                    if (nodoExiste(cabeza,buffer) == 0){
+                        r = insertarEnLista(&cabeza,buffer);
+                        sprintf(result,"%d",r); //casteamos resultado a char*
+                        }
                     //registramos usuario
-                    insertarEnLista(&cabeza,buffer);
 
-                    printf("Usuario registrado con éxito. Comprobamos que está:\n");
-                    imprimirLista(cabeza);
+                    if (strcmp(result,"0") == 0){
+                        printf("Usuario registrado con éxito. Comprobamos que está:\n");
+                        imprimirLista(cabeza);
+                    }
                     
-
+                
+                    //código de operación 
+                    strcpy(buffer,result);
                     //enviamos confirmación
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
 
