@@ -30,20 +30,21 @@ void tratar_peticion (void *s){
 
         while(1){
                 int n = readLine(sc, buffer, 256); 
+                printf("Buffer recibido: %s\n",buffer);
+
                 if (n==-1){
-                        printf("Error en el servidor");
+                        printf("Error en el servidor\n");
                         break; 
                 }
 
-                printf("Buffer recibido: %s\n",buffer);
 
                 
-                if (strcpy(buffer,"0") != 0){
+                if (strcmp(buffer,"Registro") == 0){
                 
                     /*REGISTER*/
 
                     //enviamos confirmación
-                    strcpy(buffer,"Registro");
+                    
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
                     
                     //obtenemos usuario
@@ -69,24 +70,23 @@ void tratar_peticion (void *s){
                     
                 
                     //código de operación 
+                    printf("Resultado: %s\n",result);
                     strcpy(buffer,result);
-                    //enviamos confirmación
-                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
 
                 }
 
                 //sendmessage
                 int err = sendMessage(sc, buffer, strlen(buffer)+1);  // envía el resultado
                 if (err == -1) {
-                        printf("Error en envío\n");
+                        printf("Error en envío abajo\n");
                         break;
                 }
                 if (strcmp(buffer,"EXIT") == 0){
                         break;
                 }
-                }
+        }
 
-
+        printf("Cerramos socket y salimos\n");
         close(sc);
         pthread_exit(NULL);
 }

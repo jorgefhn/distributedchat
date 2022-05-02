@@ -53,8 +53,8 @@ class client :
         sock = client.openSocket(host,port)
         
         try:
-            #mandamos codigo de operación con nombre
-            sock.sendall("0\0".encode())
+            #mandamos petición de registro
+            sock.sendall("Registro".encode())
             sock.sendall(b'\0')
 
             #recibimos respuesta
@@ -65,13 +65,17 @@ class client :
             sock.sendall(b'\0')
 
             r = client.readResponse(sock) #respuesta
-            if r == 0:
+            if r == "0":
                 print("Usuario registrado con éxito")
             
-            if r == 1:
+            if r == "1":
                 print("Usuario ya existe")
 
+            sock.sendall("Final".encode())
+            sock.sendall(b'\0')
+
         
+                    
         finally:
             print("Closing socket")
             sock.close()
