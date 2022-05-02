@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include "lines.h"
+#include "linked-list.h"
 #include <pthread.h>
 #include <stdbool.h>
 
@@ -13,6 +14,8 @@
 pthread_mutex_t m;
 pthread_cond_t c;
 int busy;
+
+tpuntero cabeza;
 
 void tratar_peticion (void *s){
         char buffer[256];
@@ -30,17 +33,31 @@ void tratar_peticion (void *s){
                 }
 
                 printf("Buffer recibido: %s\n",buffer);
+
+                
                 if (strcpy(buffer,"0") != 0){
+                
+                    /*REGISTER*/
+
                     //enviamos confirmación
                     strcpy(buffer,"Registro");
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
                     
                     //obtenemos usuario
                     if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
+                    printf("Vamos a registrar al usuario: %s\n",buffer);
+
+
+                    //registramos usuario
+                    insertarEnLista(&cabeza,buffer);
+
+                    printf("Usuario registrado con éxito. Comprobamos que está:\n");
+                    imprimirLista(cabeza);
+                    
+
                     //enviamos confirmación
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
 
-                    printf("Vamos a registrar al usuario: %s\n",buffer);
                 }
 
                 //sendmessage
