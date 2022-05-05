@@ -73,7 +73,6 @@ class client :
                 return client.RC.OK
 
             if r == "1":
-            
                 return client.RC.ERROR
 
 

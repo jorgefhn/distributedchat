@@ -48,13 +48,22 @@ void tratar_peticion (void *s){
                     printf("Vamos a registrar al usuario: %s\n",buffer);
 
 
+                    //comprobar si existe
+                    int existe = nodoExiste(cabeza,buffer);
+                    printf("Existe: %d\n",existe);
                     //registramos usuario
-                    insertarEnLista(&cabeza,buffer);
+                    if (existe == 0){
+                        insertarEnLista(&cabeza,buffer);
+                        strcpy(buffer,"0");
 
-                    printf("Usuario registrado con éxito. Comprobamos que está:\n");
-                    imprimirLista(cabeza);
+                    }
+
+                    if (existe == 1){ //ya existe el usuario. 
+                        strcpy(buffer,"1");
+                    }
+
+                    imprimirLista(cabeza);//opcional
                     
-                    strcpy(buffer,"0");
 
                     //enviamos confirmación
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
