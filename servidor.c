@@ -35,7 +35,7 @@ void tratar_peticion (void *s){
                 printf("Buffer recibido: %s\n",buffer);
 
                 
-                if (strcpy(buffer,"0") != 0){
+                if (strcmp(buffer,"Registro") == 0){
                 
                     /*REGISTER*/
 
