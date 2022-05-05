@@ -65,6 +65,35 @@ int nodoExiste(tnodo *cabeza,char* user){
     return(0); //no existe           
 }
 
+int borrarPorUsuario(tpuntero *cabeza,char* user){
+    //borra un nodo por su clave
+    
+    tpuntero actual = *cabeza;
+    tpuntero prev_node;
+
+    
+    while(actual != NULL){ //Mientras cabeza no sea NULL
+        if (strcmp(actual->user,user) == 0){
+            if (actual == *cabeza){
+                *cabeza = (*cabeza)->sig;
+                free(actual);  
+            }
+            else{
+                prev_node->sig = actual->sig;
+                free(actual);
+            }
+        
+            break;
+        }
+        prev_node = actual;
+        actual = actual -> sig;
+        }
+    if(actual == NULL){
+        return -1;
+    
+    }
+    return 0;    
+}
 
 
 /*
@@ -113,36 +142,7 @@ int numItems(tnodo *cabeza){
     }
     return(counter);         
 }
-int borrarPorClave(tpuntero *cabeza,int key){
-    //borra un nodo por su clave
-    
-    tpuntero actual = *cabeza;
-    tpuntero prev_node;
 
-    
-    while(actual != NULL){ //Mientras cabeza no sea NULL
-        if (actual->clave == key){
-            if (actual == *cabeza){
-                *cabeza = (*cabeza)->sig;
-                free(actual);  
-            }
-            else{
-                prev_node->sig = actual->sig;
-                free(actual);
-            }
-        
-            break;
-        }
-        prev_node = actual;
-        actual = actual -> sig;
-        }
-    if(actual == NULL){
-        printf("hola");
-        return -1;
-    
-    }
-    return 0;    
-}
 
 int nodoExiste(tnodo *cabeza,int key){
     tnodo *actual = cabeza;

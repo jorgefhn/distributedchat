@@ -26,13 +26,14 @@ void tratar_peticion (void *s){
         pthread_mutex_unlock(&m);
 
         while(1){
+
                 int n = readLine(sc, buffer, 256); 
                 if (n==-1){
-                        printf("Error en el servidor");
+                        printf("Error en el servidor de arriba\n");
                         break; 
                 }
 
-                printf("Buffer recibido: %s\n",buffer);
+                //printf("Buffer recibido: %s\n",buffer);
 
                 
                 if (strcmp(buffer,"Registro") == 0){
@@ -63,25 +64,51 @@ void tratar_peticion (void *s){
                     }
 
                     imprimirLista(cabeza);//opcional
-                    
+
+                     //enviamos confirmación
+                    printf("Vamos a enviar la confirmación: %s\n",buffer);
+                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
+                    printf("Enviado con éxito\n");
+                
+                }
+                
+                if (strcmp(buffer,"Unregister") == 0){
+                
 
                     //enviamos confirmación
+                    strcpy(buffer,"Unregister");
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
+                    
+                    //obtenemos usuario
+                    if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
+                    printf("Vamos a quitar al usuario: %s\n",buffer);
 
+
+                    //comprobar si existe
+                    int existe = nodoExiste(cabeza,buffer);
+                    printf("Existe: %d\n",existe);
+                    //borramos al usuario si existe
+                    if (existe == 1){
+                        printf("Existía, vamos a borrarlo\n");
+                        borrarPorUsuario(&cabeza,buffer);
+
+                        strcpy(buffer,"0");
+
+                    }
+
+                    if (existe == 0){ //no existe el usuario. 
+                        strcpy(buffer,"1");
+                    }
+
+                    
+
+                   
                 }
 
-                //sendmessage
-                int err = sendMessage(sc, buffer, strlen(buffer)+1);  // envía el resultado
-                if (err == -1) {
-                        printf("Error en envío\n");
-                        break;
-                }
                 if (strcmp(buffer,"EXIT") == 0){
                         break;
                 }
-                }
-
-
+        }
         close(sc);
         pthread_exit(NULL);
 }

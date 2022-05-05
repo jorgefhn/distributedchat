@@ -54,19 +54,24 @@ class client :
         
         try:
             #mandamos petición de registro
-            sock.sendall("Registro".encode())
-            sock.sendall(b'\0')
+            sock.sendall("Registro".encode()+b'\0')
+            #sock.sendall(b'\0')
 
             #recibimos respuesta
             print("La operación a realizar es: ",client.readResponse(sock))
 
             #enviamos usuario
-            sock.sendall(str(user).encode())
-            sock.sendall(b'\0')
+            sock.sendall(str(user).encode()+b'\0')
+            #sock.sendall(b'\0')
+
+            print("Aquí ya envia el usuario")
 
             r = client.readResponse(sock) #respuesta
+            print("Confirmación recibida: ",r)
+
 
             print("Closing socket")
+
             sock.close()
 
             if r == "0":
@@ -96,10 +101,10 @@ class client :
     def unregister(user,host,port):
 
         sock = client.openSocket(host,port)
-
+        
         try:
-        #mandamos codigo de operación con nombre
-            sock.sendall("0\0".encode())
+            #mandamos petición de registro
+            sock.sendall("Unregister".encode())
             sock.sendall(b'\0')
 
             #recibimos respuesta
@@ -109,13 +114,26 @@ class client :
             sock.sendall(str(user).encode())
             sock.sendall(b'\0')
 
-            print("Usuario",client.readResponse(sock),"quitado del registro con éxito")
+            print("Aquí ya envia el usuario")
 
-        
-        finally:
+            r = client.readResponse(sock) #respuesta
+            print("Confirmación recibida ",r)
+
+
             print("Closing socket")
             sock.close()
-            return client.RC.ERROR
+
+            if r == "0":
+                return client.RC.OK
+
+            if r == "1":
+                return client.RC.ERROR
+
+
+        except:
+            print("User error socket")
+            sock.close()
+            return client.RC.USER_ERROR
 
 
     # *

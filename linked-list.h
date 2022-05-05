@@ -5,6 +5,8 @@ int insertarEnLista (tpuntero *cabeza, char* user);
 int imprimirLista (tnodo *cabeza);
 int borrarLista (tpuntero *cabeza);
 int nodoExiste(tnodo *cabeza,char* user);
+int borrarPorUsuario(tpuntero*cabeza, char *user);
+
 
 
 /*
