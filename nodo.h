@@ -1,7 +1,7 @@
 #define MAXSIZE 256
 
 typedef struct snodo{ //snodo es el nombre de la estructura
-    char user[MAXSIZE];
+    char user[256];
     
     struct snodo *sig; //El puntero siguiente para recorrer la lista enlazada
 }tnodo; //tnodo es el tipo de dato para declarar la estructura

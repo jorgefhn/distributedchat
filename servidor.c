@@ -25,6 +25,8 @@ void tratar_peticion (void *s){
         pthread_cond_signal(&c);
         pthread_mutex_unlock(&m);
 
+        //borrarLista(&cabeza); //inicializamos lista
+
         while(1){
 
                 int n = readLine(sc, buffer, 256); 
@@ -54,16 +56,21 @@ void tratar_peticion (void *s){
                     printf("Existe: %d\n",existe);
                     //registramos usuario
                     if (existe == 0){
+                        printf("No existe el usuario %s\n",buffer);
                         insertarEnLista(&cabeza,buffer);
                         strcpy(buffer,"0");
 
                     }
 
                     if (existe == 1){ //ya existe el usuario. 
+                        printf("Ya existe el usuario %s\n",buffer);
+
                         strcpy(buffer,"1");
                     }
 
                     imprimirLista(cabeza);//opcional
+
+                    printf("Numero de ítems: %d\n",numItems(cabeza));
 
                      //enviamos confirmación
                     printf("Vamos a enviar la confirmación: %s\n",buffer);

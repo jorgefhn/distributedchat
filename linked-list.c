@@ -10,6 +10,7 @@ int insertarEnLista (tpuntero *cabeza, char* user){
     nuevo = malloc(sizeof(tnodo)); //Utilizamos malloc para reservar memoria para ese nodo
     strcpy(nuevo->user,user);
 
+    
     nuevo->sig = *cabeza; //Le asignamos al siguiente el valor de cabeza
     *cabeza = nuevo; //Cabeza pasa a ser el ultimo nodo agregado
     //falta indicar si la clave ya existe devolviendo -1
@@ -54,7 +55,7 @@ int nodoExiste(tnodo *cabeza,char* user){
     tnodo *actual = cabeza;
   
     while(actual != NULL){ //Mientras cabeza no sea NULL
-        if (strcpy(actual->user,user) != 0){
+        if (strcmp(actual->user,user) == 0){
             return(1);
         }
 
@@ -95,6 +96,15 @@ int borrarPorUsuario(tpuntero *cabeza,char* user){
     return 0;    
 }
 
+int numItems(tnodo *cabeza){
+    tnodo *actual = cabeza;
+    int counter = 0;
+    while(actual != NULL){ //Mientras cabeza no sea NULL
+        counter++;
+        actual = actual -> sig;
+    }
+    return(counter);         
+}
 
 /*
 
@@ -133,15 +143,6 @@ int modificarEnLista (tnodo *cabeza, int key, char *value1, int value2, float va
     return(0);
 }
  
-int numItems(tnodo *cabeza){
-    tnodo *actual = cabeza;
-    int counter = 0;
-    while(actual != NULL){ //Mientras cabeza no sea NULL
-        counter++;
-        actual = actual -> sig;
-    }
-    return(counter);         
-}
 
 
 int nodoExiste(tnodo *cabeza,int key){
