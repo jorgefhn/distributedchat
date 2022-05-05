@@ -9,6 +9,7 @@ int insertarEnLista (tpuntero *cabeza, char* user){
     tpuntero nuevo; //Creamos un nuevo nodo
     nuevo = malloc(sizeof(tnodo)); //Utilizamos malloc para reservar memoria para ese nodo
     strcpy(nuevo->user,user);
+    nuevo->last_recv = 0; //por defecto, último mensaje recibido
 
     
     nuevo->sig = *cabeza; //Le asignamos al siguiente el valor de cabeza

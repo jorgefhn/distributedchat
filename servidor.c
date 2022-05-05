@@ -25,7 +25,44 @@ void tratar_peticion (void *s){
         pthread_cond_signal(&c);
         pthread_mutex_unlock(&m);
 
+        char ip[256];
+        char p[256];
+        
+
         //borrarLista(&cabeza); //inicializamos lista
+
+        //recibimos ip del cliente
+        //ip 
+        int n = readLine(sc, buffer, 256); 
+        if (n==-1){
+                printf("Error en el servidor de arriba\n");
+                }
+
+        strcpy(ip,buffer); //copia la ip al buffer
+
+        //recibimos puerto del cliente
+        //puerto
+        
+        n = readLine(sc, buffer, 256); 
+        if (n==-1){
+                printf("Error en el servidor de arriba\n");
+                }
+
+        strcpy(p,buffer); //copia la port al buffer
+        
+
+        printf("IP: %s\n",ip);
+        printf("Port: %s\n",p);
+
+        
+
+        
+
+
+
+
+
+        
 
         while(1){
 
@@ -188,8 +225,8 @@ int main(int argc, char *argv[]){
 			printf("Error en accept\n");
 			return -1;
 		}
-		printf("conexión aceptada de IP: %s   Puerto: %d\n",
-				inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
+
+                
 
   		                     // cierra la conexión (sc)
 	}

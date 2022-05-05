@@ -28,6 +28,9 @@ class client :
 
 
 
+
+    
+
     @staticmethod
     def openSocket(host,port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -46,6 +49,16 @@ class client :
             a += msg.decode()
 
         return a
+
+
+    @staticmethod
+    def sendParameters(host,port):
+        sock = client.openSocket(host,port)
+        sock.sendall(host.encode()+b'\0')
+        sock.sendall(port.encode()+b'\0')
+        sock.close()
+
+        
 
     @staticmethod
     def register(user,host,port):
@@ -196,6 +209,8 @@ class client :
         print("Host: ",host)
         print("Port: ",port)
 
+        client.sendParameters(host,port)
+
 
         while (True) :
             try :
@@ -225,7 +240,16 @@ class client :
 
                     elif(line[0]=="UNREGISTER") :
                         if (len(line) == 2) :
-                            client.unregister(line[1],host,port)
+                            var = client.unregister(line[1],host,port).value
+                            print("Var: ",var)
+                            if var == 0: #ok
+                                print("UNREGISTER OK")
+
+                            if (var) == 1: #usuario no existe
+                                print("USER DOES NOT EXIST")
+
+                            if (var) == 2: #error
+                                print("UNREGISTER FAIL")
                         else :
                             print("Syntax error. Usage: UNREGISTER <userName>")
 
