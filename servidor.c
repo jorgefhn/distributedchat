@@ -81,6 +81,7 @@ void tratar_peticion (void *s){
                 
                 if (strcmp(buffer,"Unregister") == 0){
                 
+                    /*UNREGISTER*/
 
                     //enviamos confirmación
                     strcpy(buffer,"Unregister");
@@ -88,28 +89,34 @@ void tratar_peticion (void *s){
                     
                     //obtenemos usuario
                     if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
-                    printf("Vamos a quitar al usuario: %s\n",buffer);
+                    printf("Vamos a borrar al usuario: %s\n",buffer);
 
 
                     //comprobar si existe
                     int existe = nodoExiste(cabeza,buffer);
                     printf("Existe: %d\n",existe);
-                    //borramos al usuario si existe
+                    //registramos usuario
                     if (existe == 1){
-                        printf("Existía, vamos a borrarlo\n");
+                        printf("Existe el usuario %s. Lo borramos\n",buffer);
                         borrarPorUsuario(&cabeza,buffer);
-
+                        imprimirLista(cabeza);
                         strcpy(buffer,"0");
 
                     }
 
-                    if (existe == 0){ //no existe el usuario. 
+                    if (existe == 0){ //ya existe el usuario. 
+                        printf("No existe el usuario %s\n",buffer);
+
                         strcpy(buffer,"1");
                     }
 
-                    
 
-                   
+                    printf("Numero de ítems: %d\n",numItems(cabeza));
+
+                     //enviamos confirmación
+                    printf("Vamos a enviar la confirmación: %s\n",buffer);
+                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
+                    printf("Enviado con éxito\n");
                 }
 
                 if (strcmp(buffer,"EXIT") == 0){
