@@ -9,6 +9,9 @@ int insertarEnLista (tpuntero *cabeza, char* user){
     tpuntero nuevo; //Creamos un nuevo nodo
     nuevo = malloc(sizeof(tnodo)); //Utilizamos malloc para reservar memoria para ese nodo
     strcpy(nuevo->user,user);
+    strcpy(nuevo->ip,"0");
+    nuevo->puerto = 0;
+    strcpy(nuevo->estado,"Desconectado");
     nuevo->last_recv = 0; //por defecto, último mensaje recibido
     
     nuevo->sig = *cabeza; //Le asignamos al siguiente el valor de cabeza
@@ -45,6 +48,8 @@ int imprimirLista(tnodo *cabeza){
         
 
         printf("USER:%s\n",user); //Imprimimos el usuario
+        printf("IP:%s\n",ip);
+        printf("PUERTO:%d\n",port);
         printf("----------------------------------\n");
 
 
@@ -60,7 +65,12 @@ int nodoExiste(tnodo *cabeza,char* user){
   
     while(actual != NULL){ //Mientras cabeza no sea NULL
         if (strcmp(actual->user,user) == 0){
-            return(1);
+            if (strcmp(actual->estado,"Desconectado") == 0){
+                return(1);
+            }
+            else{
+                return(2);
+            }
         }
 
         actual = actual -> sig;
@@ -108,6 +118,27 @@ int numItems(tnodo *cabeza){
         actual = actual -> sig;
     }
     return(counter);         
+}
+
+int modificarEnLista (tnodo *cabeza, char * user, char * ip, int port){
+    //busca por una key y devuelve la peticion
+    tnodo *actual = cabeza;
+  
+    while(actual != NULL){ //Mientras cabeza no sea NULL
+        if (strcmp(actual->user,user) == 0){
+            strcpy(actual->ip,ip);
+            actual->puerto = port;
+            strcpy(actual->estado,"Conectado");
+            break;
+        }
+        actual = actual->sig; //Cabeza avanza 1 posicion en la lista
+    }
+
+    if (actual == NULL){
+
+        return -1; //código de operacion 8: no encontrado
+    }
+    return(0);
 }
 
 /*

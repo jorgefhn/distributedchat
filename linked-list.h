@@ -7,8 +7,7 @@ int borrarLista (tpuntero *cabeza);
 int nodoExiste(tnodo *cabeza,char* user);
 int borrarPorUsuario(tpuntero*cabeza, char *user);
 int numItems(tnodo *cabeza);
-
-
+int modificarEnLista(tnodo *cabeza, char * user, char * ip, int port);
 
 /*
 

@@ -2,6 +2,7 @@ from enum import Enum
 import argparse
 import socket
 import sys
+import threading
 
 class client :
 
@@ -12,6 +13,7 @@ class client :
         OK = 0
         ERROR = 1
         USER_ERROR = 2
+        ERROR2 = 3
 
     # ****************** ATTRIBUTES ******************
     _server = None
@@ -46,10 +48,6 @@ class client :
         return a
 
 
-    
-
-
-
     @staticmethod
     def register(user,host,port):
         
@@ -58,22 +56,17 @@ class client :
         try:
 
             #envía host y puerto
-            
-
-
+    
             #mandamos petición de registro
             sock.sendall("Registro".encode()+b'\0')
             #sock.sendall(b'\0')
-
-            
-
 
             #recibimos respuesta
             print("La operación a realizar es: ",client.readResponse(sock))
 
             #enviamos usuario
             sock.sendall(str(user).encode()+b'\0')
-            
+
             r = client.readResponse(sock) #respuesta
             print("Confirmación recibida: ",r)
 
@@ -88,16 +81,14 @@ class client :
             if r == "1":
                 return client.RC.ERROR
 
+            if r == "2":
+                return client.RC.USER_ERROR
+
 
         except:
             print("User error socket")
             sock.close()
             return client.RC.USER_ERROR
-
-
-                
-        
-           
 
     # *
     # 	 * @param user - User name to unregister from the system
@@ -141,7 +132,7 @@ class client :
         except:
             print("User error socket")
             sock.close()
-            return client.RC.USER_ERROR
+            return client.RC.ERROR2
 
 
     # *
@@ -151,9 +142,47 @@ class client :
     # * @return USER_ERROR if the user does not exist or if it is already connected
     # * @return ERROR if another error occurred
     @staticmethod
-    def  connect(user) :
-        #  Write your code here
-        return client.RC.ERROR
+    def  connect(user, host, port):
+        #Creamos el socket
+        sock = client.openSocket(host,port)
+
+        try:
+            #hilo = threading.Thread(target=send)
+            #enviamos solicitud de conexión
+            sock.sendall("Conexión".encode())
+            sock.sendall(b'\0')
+            
+            #recibimos confirmación de la operación
+            print("La operación a realizar es: ",client.readResponse(sock))
+
+            #enviamos el usuario 
+            sock.sendall(str(user).encode())
+            sock.sendall(b'\0')
+            #enviamos la ip
+            sock.sendall(str(sock.getsockname()[0]).encode())
+            sock.sendall(b'\0')
+            #enviamos el puerto 
+            sock.sendall(str(sock.getsockname()[1]).encode())
+            sock.sendall(b'\0')
+
+            #Recibimos la confirmación
+            r = client.readResponse(sock) #respuesta
+            print("Confirmación recibida ",r)
+
+            print("Closing socket")
+            sock.close()
+
+            #Devolvemos el resultado
+            if r == "0":
+                return client.RC.OK
+
+            if r == "1":
+                return client.RC.ERROR
+
+        except:
+            print("User error socket")
+            sock.close()
+            return client.RC.USER_ERROR
 
 
     # *
@@ -201,11 +230,6 @@ class client :
         host = sys.argv[2]
         port = sys.argv[4]
 
-        
-
-        
-
-
         while (True) :
             try :
                 command = input("c> ")
@@ -249,7 +273,18 @@ class client :
 
                     elif(line[0]=="CONNECT") :
                         if (len(line) == 2) :
-                            client.connect(line[1])
+                            var = client.connect(line[1],host,port).value
+                            if var == 0: #ok
+                                print("CONNECT OK")
+
+                            if (var) == 1: #usuario no existe
+                                print("CONNECT FAIL, USER DOES NOT EXIST")
+
+                            if (var) == 2: #error, usuario ya conectado
+                                print("USER ALREADY CONNECTED")
+
+                            if (var) == 3: #error
+                                print("CONNECT FAIL")
                         else :
                             print("Syntax error. Usage: CONNECT <userName>")
 
