@@ -54,6 +54,7 @@ void tratar_peticion (void *s){
                     printf("Usuario registrado con éxito. Comprobamos que está:\n");
                     imprimirLista(cabeza);
                     
+                    strcpy(buffer,"0");
 
                     //enviamos confirmación
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  

@@ -65,21 +65,27 @@ class client :
             sock.sendall(b'\0')
 
             r = client.readResponse(sock) #respuesta
-            if r == "0":
-                print("Usuario registrado con éxito")
-            
-            if r == "1":
-                print("Usuario ya existe")
 
-          
-
-        
-                    
-        finally:
             print("Closing socket")
             sock.close()
 
-            return client.RC.ERROR
+            if r == "0":
+                return client.RC.OK
+
+            if r == "1":
+            
+                return client.RC.ERROR
+
+
+        except:
+            print("User error socket")
+            sock.close()
+            return client.RC.USER_ERROR
+
+
+                
+        
+           
 
     # *
     # 	 * @param user - User name to unregister from the system
@@ -184,7 +190,19 @@ class client :
 
                     if (line[0]=="REGISTER") :
                         if (len(line) == 2) :
-                            client.register(line[1],host,port)
+                            var = client.register(line[1],host,port).value
+                            print("Var: ",var)
+                            if var == 0: #ok
+                                print("REGISTER OK")
+
+                            if (var) == 1: #usuario en uso
+                                print("USERNAME IN USE")
+
+                            if (var) == 2: #usuario en uso
+                                print("REGISTER FAIL")
+
+
+
                         else :
                             print("Syntax error. Usage: REGISTER <userName>")
 
