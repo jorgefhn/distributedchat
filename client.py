@@ -26,11 +26,6 @@ class client :
     # * @return ERROR if another error occurred 
 
 
-
-
-
-    
-
     @staticmethod
     def openSocket(host,port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -78,15 +73,7 @@ class client :
 
             #enviamos usuario
             sock.sendall(str(user).encode()+b'\0')
-            #sock.sendall(b'\0')
-
-
-            sock.sendall(host.encode()+b'\0')
-            sock.sendall(port.encode()+b'\0')
             
-
-            print("Aquí ya envia el usuario")
-
             r = client.readResponse(sock) #respuesta
             print("Confirmación recibida: ",r)
 

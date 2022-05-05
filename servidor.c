@@ -25,18 +25,9 @@ void tratar_peticion (void *s){
         pthread_cond_signal(&c);
         pthread_mutex_unlock(&m);
 
-        char ip[256];
-        char p[256];
         char user[256];
 
         
-
-        //borrarLista(&cabeza); //inicializamos lista
-
-        //recibimos ip del cliente
-        //ip 
-        
-
         printf("Aqui\n");
 
         while(1){
@@ -64,28 +55,7 @@ void tratar_peticion (void *s){
                         if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
                         printf("Vamos a registrar al usuario: %s\n",buffer);
 
-
                         strcpy(user,buffer);
-
-                         //coge ip y port
-                        int n = readLine(sc, buffer, 256); 
-                        if (n==-1){
-                        printf("Error en el servidor de arriba\n");
-                        }
-
-                        strcpy(ip,buffer); //copia la ip al buffer
-
-                        //recibimos puerto del cliente
-                        //puerto
-                
-                        n = readLine(sc, buffer, 256); 
-                        if (n==-1){
-                                printf("Error en el servidor de arriba\n");
-                                }
-
-                        strcpy(p,buffer); //copia la port al buffer
-                        int port = atoi(p); //casteamos a entero
-
 
                         //comprobar si existe
                         int existe = nodoExiste(cabeza,buffer);
@@ -93,7 +63,7 @@ void tratar_peticion (void *s){
                         //registramos usuario
                         if (existe == 0){
                                 printf("No existe el usuario %s\n",buffer);
-                                insertarEnLista(&cabeza,user,ip,port);
+                                insertarEnLista(&cabeza,user);
                                 strcpy(buffer,"0");
 
                         }

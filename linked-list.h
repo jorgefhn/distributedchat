@@ -1,7 +1,7 @@
 #include "nodo.h"
 #include "linked-list.c"
 
-int insertarEnLista (tpuntero *cabeza, char* user,char*ip,int port);
+int insertarEnLista (tpuntero *cabeza, char* user);
 int imprimirLista (tnodo *cabeza);
 int borrarLista (tpuntero *cabeza);
 int nodoExiste(tnodo *cabeza,char* user);

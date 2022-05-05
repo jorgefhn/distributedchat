@@ -5,14 +5,11 @@
 
 
 
-int insertarEnLista (tpuntero *cabeza, char* user,char*ip,int port){
+int insertarEnLista (tpuntero *cabeza, char* user){
     tpuntero nuevo; //Creamos un nuevo nodo
     nuevo = malloc(sizeof(tnodo)); //Utilizamos malloc para reservar memoria para ese nodo
     strcpy(nuevo->user,user);
-    strcpy(nuevo->ip,ip);
-    nuevo->puerto = port;
     nuevo->last_recv = 0; //por defecto, último mensaje recibido
-
     
     nuevo->sig = *cabeza; //Le asignamos al siguiente el valor de cabeza
     *cabeza = nuevo; //Cabeza pasa a ser el ultimo nodo agregado
@@ -48,9 +45,6 @@ int imprimirLista(tnodo *cabeza){
         
 
         printf("USER:%s\n",user); //Imprimimos el usuario
-        printf("----------------------------------\n");
-        printf("IP:%s\n",ip); //Imprimimos el usuario
-        printf("PORT:%d\n",port); //Imprimimos el usuario
         printf("----------------------------------\n");
 
 
