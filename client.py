@@ -51,14 +51,9 @@ class client :
         return a
 
 
-    @staticmethod
-    def sendParameters(host,port):
-        sock = client.openSocket(host,port)
-        sock.sendall(host.encode()+b'\0')
-        sock.sendall(port.encode()+b'\0')
-        sock.close()
+    
 
-        
+
 
     @staticmethod
     def register(user,host,port):
@@ -66,9 +61,17 @@ class client :
         sock = client.openSocket(host,port)
         
         try:
+
+            #envía host y puerto
+            
+
+
             #mandamos petición de registro
             sock.sendall("Registro".encode()+b'\0')
             #sock.sendall(b'\0')
+
+            
+
 
             #recibimos respuesta
             print("La operación a realizar es: ",client.readResponse(sock))
@@ -76,6 +79,11 @@ class client :
             #enviamos usuario
             sock.sendall(str(user).encode()+b'\0')
             #sock.sendall(b'\0')
+
+
+            sock.sendall(host.encode()+b'\0')
+            sock.sendall(port.encode()+b'\0')
+            
 
             print("Aquí ya envia el usuario")
 
@@ -206,10 +214,9 @@ class client :
         host = sys.argv[2]
         port = sys.argv[4]
 
-        print("Host: ",host)
-        print("Port: ",port)
+        
 
-        client.sendParameters(host,port)
+        
 
 
         while (True) :

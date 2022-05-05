@@ -27,42 +27,17 @@ void tratar_peticion (void *s){
 
         char ip[256];
         char p[256];
+        char user[256];
+
         
 
         //borrarLista(&cabeza); //inicializamos lista
 
         //recibimos ip del cliente
         //ip 
-        int n = readLine(sc, buffer, 256); 
-        if (n==-1){
-                printf("Error en el servidor de arriba\n");
-                }
-
-        strcpy(ip,buffer); //copia la ip al buffer
-
-        //recibimos puerto del cliente
-        //puerto
-        
-        n = readLine(sc, buffer, 256); 
-        if (n==-1){
-                printf("Error en el servidor de arriba\n");
-                }
-
-        strcpy(p,buffer); //copia la port al buffer
         
 
-        printf("IP: %s\n",ip);
-        printf("Port: %s\n",p);
-
-        
-
-        
-
-
-
-
-
-        
+        printf("Aqui\n");
 
         while(1){
 
@@ -77,42 +52,66 @@ void tratar_peticion (void *s){
                 
                 if (strcmp(buffer,"Registro") == 0){
                 
-                    /*REGISTER*/
+                        /*REGISTER*/
 
-                    //enviamos confirmación
-                    strcpy(buffer,"Registro");
-                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
-                    
-                    //obtenemos usuario
-                    if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
-                    printf("Vamos a registrar al usuario: %s\n",buffer);
+                       
+
+                        //enviamos confirmación
+                        strcpy(buffer,"Registro");
+                        if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
+                        
+                        //obtenemos usuario
+                        if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
+                        printf("Vamos a registrar al usuario: %s\n",buffer);
 
 
-                    //comprobar si existe
-                    int existe = nodoExiste(cabeza,buffer);
-                    printf("Existe: %d\n",existe);
-                    //registramos usuario
-                    if (existe == 0){
-                        printf("No existe el usuario %s\n",buffer);
-                        insertarEnLista(&cabeza,buffer);
-                        strcpy(buffer,"0");
+                        strcpy(user,buffer);
 
-                    }
+                         //coge ip y port
+                        int n = readLine(sc, buffer, 256); 
+                        if (n==-1){
+                        printf("Error en el servidor de arriba\n");
+                        }
 
-                    if (existe == 1){ //ya existe el usuario. 
-                        printf("Ya existe el usuario %s\n",buffer);
+                        strcpy(ip,buffer); //copia la ip al buffer
 
-                        strcpy(buffer,"1");
-                    }
+                        //recibimos puerto del cliente
+                        //puerto
+                
+                        n = readLine(sc, buffer, 256); 
+                        if (n==-1){
+                                printf("Error en el servidor de arriba\n");
+                                }
 
-                    imprimirLista(cabeza);//opcional
+                        strcpy(p,buffer); //copia la port al buffer
+                        int port = atoi(p); //casteamos a entero
 
-                    printf("Numero de ítems: %d\n",numItems(cabeza));
 
-                     //enviamos confirmación
-                    printf("Vamos a enviar la confirmación: %s\n",buffer);
-                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
-                    printf("Enviado con éxito\n");
+                        //comprobar si existe
+                        int existe = nodoExiste(cabeza,buffer);
+                        printf("Existe: %d\n",existe);
+                        //registramos usuario
+                        if (existe == 0){
+                                printf("No existe el usuario %s\n",buffer);
+                                insertarEnLista(&cabeza,user,ip,port);
+                                strcpy(buffer,"0");
+
+                        }
+
+                        if (existe == 1){ //ya existe el usuario. 
+                                printf("Ya existe el usuario %s\n",buffer);
+
+                                strcpy(buffer,"1");
+                        }
+
+                        imprimirLista(cabeza);//opcional
+
+                        printf("Numero de ítems: %d\n",numItems(cabeza));
+
+                        //enviamos confirmación
+                        printf("Vamos a enviar la confirmación: %s\n",buffer);
+                        if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
+                        printf("Enviado con éxito\n");
                 
                 }
                 
