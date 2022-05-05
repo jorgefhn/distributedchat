@@ -71,8 +71,7 @@ class client :
             if r == "1":
                 print("Usuario ya existe")
 
-            sock.sendall("Final".encode())
-            sock.sendall(b'\0')
+          
 
         
                     

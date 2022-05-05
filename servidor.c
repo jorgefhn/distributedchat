@@ -9,7 +9,6 @@
 #include "linked-list.h"
 #include <pthread.h>
 #include <stdbool.h>
-#include <stdlib.h>
 
 #define NUM_THREADS 10
 pthread_mutex_t m;
@@ -25,68 +24,54 @@ void tratar_peticion (void *s){
         busy = false;
         pthread_cond_signal(&c);
         pthread_mutex_unlock(&m);
-        char result[256];
-        int r;
 
         while(1){
                 int n = readLine(sc, buffer, 256); 
-                printf("Buffer recibido: %s\n",buffer);
-
                 if (n==-1){
-                        printf("Error en el servidor\n");
+                        printf("Error en el servidor");
                         break; 
                 }
 
+                printf("Buffer recibido: %s\n",buffer);
 
                 
-                if (strcmp(buffer,"Registro") == 0){
+                if (strcpy(buffer,"0") != 0){
                 
                     /*REGISTER*/
 
                     //enviamos confirmación
-                    
+                    strcpy(buffer,"Registro");
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
                     
                     //obtenemos usuario
                     if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
                     printf("Vamos a registrar al usuario: %s\n",buffer);
 
-                
-                    if (nodoExiste(cabeza,buffer) == 1){
-                        printf("usuario %s ya está registrado\n",buffer);
-                        strcpy(result,"1"); //ya existe un usuario registrado con ese nombre
-                    }
 
-                    if (nodoExiste(cabeza,buffer) == 0){
-                        r = insertarEnLista(&cabeza,buffer);
-                        sprintf(result,"%d",r); //casteamos resultado a char*
-                        }
                     //registramos usuario
+                    insertarEnLista(&cabeza,buffer);
 
-                    if (strcmp(result,"0") == 0){
-                        printf("Usuario registrado con éxito. Comprobamos que está:\n");
-                        imprimirLista(cabeza);
-                    }
+                    printf("Usuario registrado con éxito. Comprobamos que está:\n");
+                    imprimirLista(cabeza);
                     
-                
-                    //código de operación 
-                    printf("Resultado: %s\n",result);
-                    strcpy(buffer,result);
+
+                    //enviamos confirmación
+                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
 
                 }
 
                 //sendmessage
                 int err = sendMessage(sc, buffer, strlen(buffer)+1);  // envía el resultado
                 if (err == -1) {
-                        printf("Error en envío abajo\n");
+                        printf("Error en envío\n");
                         break;
                 }
                 if (strcmp(buffer,"EXIT") == 0){
                         break;
                 }
-        }
+                }
 
-        printf("Cerramos socket y salimos\n");
+
         close(sc);
         pthread_exit(NULL);
 }
