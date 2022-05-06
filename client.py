@@ -81,8 +81,7 @@ class client :
             if r == "1":
                 return client.RC.ERROR
 
-            if r == "2":
-                return client.RC.USER_ERROR
+            
 
 
         except:
@@ -132,7 +131,7 @@ class client :
         except:
             print("User error socket")
             sock.close()
-            return client.RC.ERROR2
+            return client.RC.USER_ERROR
 
 
     # *
@@ -149,9 +148,10 @@ class client :
         try:
             #hilo = threading.Thread(target=send)
             #enviamos solicitud de conexión
-            sock.sendall("Conexión".encode())
+            sock.sendall("Conexion".encode())
             sock.sendall(b'\0')
             
+            print("Aquí")
             #recibimos confirmación de la operación
             print("La operación a realizar es: ",client.readResponse(sock))
 
@@ -179,10 +179,13 @@ class client :
             if r == "1":
                 return client.RC.ERROR
 
+            if r == "2":
+                return client.RC.ERROR
+
         except:
             print("User error socket")
             sock.close()
-            return client.RC.USER_ERROR
+            return client.RC.ERROR2
 
 
     # *
