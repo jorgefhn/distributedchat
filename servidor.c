@@ -135,17 +135,17 @@ void tratar_peticion (void *s){
                     
                     //obtenemos usuario
                     if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
-                    printf("Vamos a borrar al usuario: %s\n",buffer);
+                    printf("Vamos a conectar al usuario: %s\n",buffer);
                     strcpy(usuario,buffer);
 
                     //obtenemos la ip
                     if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
-                    printf("Vamos a borrar al usuario: %s\n",buffer);
+                    printf("Obtenemos la ip: %s\n",buffer);
                     strcpy(ip,buffer);
 
                     //obtenemos el puerto
                     if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
-                    printf("Vamos a borrar al usuario: %s\n",buffer);
+                    printf("Obtenemos el puerto: %s\n",buffer);
                     puerto = atoi(buffer);
 
                     //comprobar si existe el usuario
@@ -155,7 +155,7 @@ void tratar_peticion (void *s){
                     //Cambiamos los valores del usuario si existe y si está conectado
                     if (existe == 1){
                         printf("El usuario %s se ha conectado\n",usuario);
-                        modificarEnLista (cabeza,usuario,ip,puerto);
+                        modificarEnLista (cabeza,usuario,ip,puerto,"Conectado");
                         imprimirLista(cabeza);
                         strcpy(buffer,"0");
 
@@ -167,11 +167,51 @@ void tratar_peticion (void *s){
                         strcpy(buffer,"1");
                     }
 
-                    if (existe == 2){ //existe pero está conectado
-                        printf("El usuario ya está conectado %s\n",buffer);
+                   
+                    //enviamos confirmación
+                    printf("Vamos a enviar la confirmación: %s\n",buffer);
+                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
+                    printf("Enviado con éxito\n");
+                }
 
-                        strcpy(buffer,"2");
+
+
+
+                if (strcmp(buffer,"Desconexion") == 0){                
+                    /*DISCONNECT*/
+
+                    char usuario[256];
+                    
+
+                    //enviamos confirmación
+                    strcpy(buffer,"Desconexion");
+                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
+                    
+                    //obtenemos usuario
+                    if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
+                    printf("Vamos a desconectar al usuario: %s\n",buffer);
+                    strcpy(usuario,buffer);
+
+                    //comprobar si existe el usuario
+                    int existe = nodoExiste(cabeza,usuario);
+                    printf("Existe: %d\n",existe);
+
+                    //Cambiamos los valores del usuario si existe y si está conectado
+                    if (existe == 1){
+                        printf("El usuario %s se ha conectado\n",usuario);
+                        modificarEnLista (cabeza,usuario,"",0,"Desconectado");
+                        imprimirLista(cabeza);
+                        strcpy(buffer,"0");
+
                     }
+
+                    if (existe == 0){ //no existe el usuario
+                        printf("No existe el usuario %s\n",buffer);
+
+                        strcpy(buffer,"1");
+                    }
+
+                   
 
                     //enviamos confirmación
                     printf("Vamos a enviar la confirmación: %s\n",buffer);

@@ -4,7 +4,9 @@ import socket
 import sys
 import threading
 
-class client :
+
+usuario_conectado = ""
+class client:
 
     # ******************** TYPES *********************
     # *
@@ -13,7 +15,7 @@ class client :
         OK = 0
         ERROR = 1
         USER_ERROR = 2
-        ERROR2 = 3
+        ERROR3 = 3
 
     # ****************** ATTRIBUTES ******************
     _server = None
@@ -35,6 +37,22 @@ class client :
         print('connecting to {} port {}'.format(*server_address))
         sock.connect(server_address)
         return sock
+
+  
+
+    @staticmethod
+    def listen(host,port):
+        sock= client.openSocket(host,port)
+        while(1):
+            try:
+                connection, client_address =sock.accept()
+                print("connection from: ",client_address)
+                mensaje = client.readResponse(connection)
+                print(mensaje)
+
+            except:
+                connection.close()
+
     
     @staticmethod
     def readResponse(sock):
@@ -81,8 +99,7 @@ class client :
             if r == "1":
                 return client.RC.ERROR
 
-            if r == "2":
-                return client.RC.USER_ERROR
+            
 
 
         except:
@@ -109,11 +126,14 @@ class client :
             #recibimos respuesta
             print("La operación a realizar es: ",client.readResponse(sock))
 
+
+                
             #enviamos usuario
             sock.sendall(str(user).encode())
             sock.sendall(b'\0')
 
             print("Aquí ya envia el usuario")
+
 
             r = client.readResponse(sock) #respuesta
             print("Confirmación recibida ",r)
@@ -132,7 +152,7 @@ class client :
         except:
             print("User error socket")
             sock.close()
-            return client.RC.ERROR2
+            return client.RC.USER_ERROR
 
 
     # *
@@ -142,27 +162,124 @@ class client :
     # * @return USER_ERROR if the user does not exist or if it is already connected
     # * @return ERROR if another error occurred
     @staticmethod
+<<<<<<< HEAD
     def connect(user, host, port):
+=======
+    def  connect(user, host, port):
+        global usuario_conectado
+>>>>>>> 4551b8ed1f1bb234cc99011d0e0fcbc54d9014c7
         #Creamos el socket
+
+        if usuario_conectado == user:
+            return(client.RC.USER_ERROR);
+
+
+        sock = client.openSocket(host,port)
+
+         
+
+        try:
+            #enviamos solicitud de conexión
+            sock.sendall("Conexion".encode())
+            sock.sendall(b'\0')
+<<<<<<< HEAD
+
+=======
+            
+            print("Aquí")
+>>>>>>> 4551b8ed1f1bb234cc99011d0e0fcbc54d9014c7
+            #recibimos confirmación de la operación
+            print("La operación a realizar es: ",client.readResponse(sock))
+
+
+            
+            #enviamos el usuario 
+            sock.sendall(str(user).encode())
+            sock.sendall(b'\0')
+            #enviamos la ip
+
+            ip = str(sock.getsockname()[0])
+            puerto = str(sock.getsockname()[1])
+
+            sock.sendall(ip.encode())
+            sock.sendall(b'\0')
+            #enviamos el puerto 
+            sock.sendall(puerto.encode())
+            sock.sendall(b'\0')
+
+            #Recibimos la confirmación
+            r = client.readResponse(sock) #respuesta
+            print("Confirmación recibida ",r)
+
+            sock.close()
+            if r == "0":
+                usuario_conectado = user
+                sock2 = client.openSocket(ip,0) #
+                server_address = (ip,0)
+                sock.bind(server_address)
+                hilo = threading.Thread(target=client.listen(ip,puerto))
+
+
+
+                return client.RC.OK
+
+            if r == "1":
+                return client.RC.ERROR
+
+           
+
+
+
+            print("Closing socket")
+            
+            
+
+
+
+            #Devolvemos el resultado
+            
+
+            
+
+
+        except:
+            print("User error socket")
+            sock.close()
+            return client.RC.ERROR3
+
+
+    # *
+    # * @param user - User name to disconnect from the system
+    # * 
+    # * @return OK if successful
+    # * @return USER_ERROR if the user does not exist
+    # * @return ERROR if another error occurred
+    @staticmethod
+    def disconnect(user, host, port) :
+        global usuario_conectado
+
+        #  Write your code here
+        #Creamos el socket
+
+        if usuario_conectado != user:
+            print("Usuario_conectado: ",usuario_conectado)
+
+            return(client.RC.USER_ERROR);
+
+
         sock = client.openSocket(host,port)
 
         try:
             #hilo = threading.Thread(target=send)
             #enviamos solicitud de conexión
-            sock.sendall("Conexion".encode())
+            sock.sendall("Desconexion".encode())
             sock.sendall(b'\0')
-
+            
             #recibimos confirmación de la operación
             print("La operación a realizar es: ",client.readResponse(sock))
 
             #enviamos el usuario 
             sock.sendall(str(user).encode())
-            sock.sendall(b'\0')
-            #enviamos la ip
-            sock.sendall(str(sock.getsockname()[0]).encode())
-            sock.sendall(b'\0')
-            #enviamos el puerto 
-            sock.sendall(str(sock.getsockname()[1]).encode())
             sock.sendall(b'\0')
 
             #Recibimos la confirmación
@@ -174,6 +291,7 @@ class client :
 
             #Devolvemos el resultado
             if r == "0":
+                usuario_conectado = ""
                 return client.RC.OK
 
             if r == "1":
@@ -183,18 +301,6 @@ class client :
             print("User error socket")
             sock.close()
             return client.RC.USER_ERROR
-
-
-    # *
-    # * @param user - User name to disconnect from the system
-    # * 
-    # * @return OK if successful
-    # * @return USER_ERROR if the user does not exist
-    # * @return ERROR if another error occurred
-    @staticmethod
-    def  disconnect(user) :
-        #  Write your code here
-        return client.RC.ERROR
 
     # *
     # * @param user    - Receiver user name
@@ -290,7 +396,19 @@ class client :
 
                     elif(line[0]=="DISCONNECT") :
                         if (len(line) == 2) :
-                            client.disconnect(line[1])
+                            var = client.disconnect(line[1],host,port).value
+
+                            if var == 0: #ok
+                                print("DISCONNECT OK")
+
+                            if (var) == 1: #usuario no existe
+                                print("DISCONNECT FAIL, USER DOES NOT EXIST")
+
+                            if (var) == 2: #error, usuario no estaba conectado
+                                print("USER NOT CONNECTED")
+
+                            if (var) == 3: #error
+                                print("DISCONNECT FAIL")
                         else :
                             print("Syntax error. Usage: DISCONNECT <userName>")
 
