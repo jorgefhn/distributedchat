@@ -142,16 +142,16 @@ class client :
     # * @return USER_ERROR if the user does not exist or if it is already connected
     # * @return ERROR if another error occurred
     @staticmethod
-    def  connect(user, host, port):
+    def connect(user, host, port):
         #Creamos el socket
         sock = client.openSocket(host,port)
 
         try:
             #hilo = threading.Thread(target=send)
             #enviamos solicitud de conexión
-            sock.sendall("Conexión".encode())
+            sock.sendall("Conexion".encode())
             sock.sendall(b'\0')
-            
+
             #recibimos confirmación de la operación
             print("La operación a realizar es: ",client.readResponse(sock))
 

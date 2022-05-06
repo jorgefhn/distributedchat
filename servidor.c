@@ -122,7 +122,7 @@ void tratar_peticion (void *s){
                     printf("Enviado con éxito\n");
                 }
 
-                if (strcmp(buffer,"Conexión") == 0){                
+                if (strcmp(buffer,"Conexion") == 0){                
                     /*CONNECT*/
 
                     char usuario[256];
@@ -130,7 +130,7 @@ void tratar_peticion (void *s){
                     int puerto;
 
                     //enviamos confirmación
-                    strcpy(buffer,"Conexión");
+                    strcpy(buffer,"Conexion");
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
                     
                     //obtenemos usuario
