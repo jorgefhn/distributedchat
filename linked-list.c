@@ -65,12 +65,7 @@ int nodoExiste(tnodo *cabeza,char* user){
   
     while(actual != NULL){ //Mientras cabeza no sea NULL
         if (strcmp(actual->user,user) == 0){
-            if (strcmp(actual->estado,"Desconectado") == 0){
-                return(1);
-            }
-            else{
-                return(2);
-            }
+            return(1);
         }
 
         actual = actual -> sig;
@@ -120,7 +115,7 @@ int numItems(tnodo *cabeza){
     return(counter);         
 }
 
-int modificarEnLista (tnodo *cabeza, char * user, char * ip, int port){
+int modificarEnLista (tnodo *cabeza, char * user, char * ip, int port, char * estado){
     //busca por una key y devuelve la peticion
     tnodo *actual = cabeza;
   
@@ -128,7 +123,7 @@ int modificarEnLista (tnodo *cabeza, char * user, char * ip, int port){
         if (strcmp(actual->user,user) == 0){
             strcpy(actual->ip,ip);
             actual->puerto = port;
-            strcpy(actual->estado,"Conectado");
+            strcpy(actual->estado,estado);
             break;
         }
         actual = actual->sig; //Cabeza avanza 1 posicion en la lista
