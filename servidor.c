@@ -38,15 +38,8 @@ void tratar_peticion (void *s){
                         break; 
                 }
 
-                //printf("Buffer recibido: %s\n",buffer);
-
-                
                 if (strcmp(buffer,"Registro") == 0){
-                
                         /*REGISTER*/
-
-                       
-
                         //enviamos confirmación
                         strcpy(buffer,"Registro");
                         if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
@@ -60,6 +53,7 @@ void tratar_peticion (void *s){
                         //comprobar si existe
                         int existe = nodoExiste(cabeza,buffer);
                         printf("Existe: %d\n",existe);
+
                         //registramos usuario
                         if (existe == 0){
                                 printf("No existe el usuario %s\n",buffer);
@@ -75,8 +69,6 @@ void tratar_peticion (void *s){
                         }
 
                         imprimirLista(cabeza);//opcional
-
-                        printf("Numero de ítems: %d\n",numItems(cabeza));
 
                         //enviamos confirmación
                         printf("Vamos a enviar la confirmación: %s\n",buffer);
