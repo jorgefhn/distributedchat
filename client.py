@@ -76,7 +76,7 @@ class client:
         
         try:
             #mandamos petición de registro
-            sock.sendall("Registro".encode()+b'\0')
+            sock.sendall("REGISTER".encode()+b'\0')
             #sock.sendall(b'\0')
 
             #recibimos respuesta
@@ -117,16 +117,14 @@ class client:
         
         try:
             #mandamos petición de registro
-            sock.sendall("Unregister".encode())
-            sock.sendall(b'\0')
+            sock.sendall("UNREGISTER".encode()+b'\0')
 
             #recibimos respuesta
             print("La operación a realizar es: ",client.readResponse(sock))
 
             #enviamos usuario
-            sock.sendall(str(user).encode())
-            sock.sendall(b'\0')
-
+            sock.sendall(str(user).encode()+b'\0')
+    
             print("Aquí ya envia el usuario")
 
             r = client.readResponse(sock) #respuesta
@@ -165,26 +163,22 @@ class client:
         
         try:
             #enviamos solicitud de conexión
-            sock.sendall("Conexion".encode())
-            sock.sendall(b'\0')
+            sock.sendall("CONNECT".encode()+b'\0')
             
-            print("Aquí")
             #recibimos confirmación de la operación
             print("La operación a realizar es: ",client.readResponse(sock))
             
             #enviamos el usuario 
-            sock.sendall(str(user).encode())
-            sock.sendall(b'\0')
-            #enviamos la ip
+            sock.sendall(str(user).encode()+b'\0')
 
             ip = str(sock.getsockname()[0])
             puerto = str(sock.getsockname()[1])
 
-            sock.sendall(ip.encode())
-            sock.sendall(b'\0')
+            #enviamos la ip
+            sock.sendall(ip.encode()+b'\0')
+
             #enviamos el puerto 
-            sock.sendall(puerto.encode())
-            sock.sendall(b'\0')
+            sock.sendall(puerto.encode()+b'\0')
 
             #Recibimos la confirmación
             r = client.readResponse(sock) #respuesta
@@ -229,23 +223,19 @@ class client:
         global usuario_conectado, sock2, hilo
 
         if usuario_conectado != user:
-            print("Usuario_conectado: ",usuario_conectado)
-
             return client.RC.ERROR2
 
         sock = client.openSocket(host,port)
 
         try:
             #enviamos solicitud de conexión
-            sock.sendall("Desconexion".encode())
-            sock.sendall(b'\0')
+            sock.sendall("DISCONNECT".encode()+b'\0')
             
             #recibimos confirmación de la operación
-            print("La operación a realizar es: ",client.readResponse(sock))
+            print("La operación a realizar es:",client.readResponse(sock))
 
             #enviamos el usuario 
-            sock.sendall(str(user).encode())
-            sock.sendall(b'\0')
+            sock.sendall(str(user).encode()+b'\0')
 
             #Recibimos la confirmación
             r = client.readResponse(sock) #respuesta

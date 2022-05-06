@@ -38,10 +38,9 @@ void tratar_peticion (void *s){
                         break; 
                 }
 
-                if (strcmp(buffer,"Registro") == 0){
+                if (strcmp(buffer,"REGISTER") == 0){
                         /*REGISTER*/
                         //enviamos confirmación
-                        strcpy(buffer,"Registro");
                         if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
                         
                         //obtenemos usuario
@@ -77,12 +76,9 @@ void tratar_peticion (void *s){
                 
                 }
                 
-                if (strcmp(buffer,"Unregister") == 0){
-                
+                if (strcmp(buffer,"UNREGISTER") == 0){
                     /*UNREGISTER*/
-
                     //enviamos confirmación
-                    strcpy(buffer,"Unregister");
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
                     
                     //obtenemos usuario
@@ -114,7 +110,7 @@ void tratar_peticion (void *s){
                     printf("Enviado con éxito\n");
                 }
 
-                if (strcmp(buffer,"Conexion") == 0){                
+                if (strcmp(buffer,"CONNECT") == 0){                
                     /*CONNECT*/
 
                     char usuario[256];
@@ -122,7 +118,6 @@ void tratar_peticion (void *s){
                     int puerto;
 
                     //enviamos confirmación
-                    strcpy(buffer,"Conexion");
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
                     
                     //obtenemos usuario
@@ -150,7 +145,6 @@ void tratar_peticion (void *s){
                         modificarEnLista (cabeza,usuario,ip,puerto,"Conectado");
                         imprimirLista(cabeza);
                         strcpy(buffer,"0");
-
                     }
 
                     if (existe == 0){ //no existe el usuario
@@ -169,14 +163,12 @@ void tratar_peticion (void *s){
 
 
 
-                if (strcmp(buffer,"Desconexion") == 0){                
+                if (strcmp(buffer,"DISCONNECT") == 0){                
                     /*DISCONNECT*/
 
                     char usuario[256];
                     
-
                     //enviamos confirmación
-                    strcpy(buffer,"Desconexion");
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
                     
                     //obtenemos usuario
@@ -194,7 +186,6 @@ void tratar_peticion (void *s){
                         modificarEnLista (cabeza,usuario,"",0,"Desconectado");
                         imprimirLista(cabeza);
                         strcpy(buffer,"0");
-
                     }
 
                     if (existe == 0){ //no existe el usuario
@@ -202,9 +193,7 @@ void tratar_peticion (void *s){
 
                         strcpy(buffer,"1");
                     }
-
-                   
-
+                    
                     //enviamos confirmación
                     printf("Vamos a enviar la confirmación: %s\n",buffer);
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
