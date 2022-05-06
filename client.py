@@ -152,7 +152,7 @@ class client:
     # * @return USER_ERROR if the user does not exist or if it is already connected
     # * @return ERROR if another error occurred
     @staticmethod
-    def  connect(user, host, port):
+    def connect(user, host, port):
         global usuario_conectado, sock2, hilo
         #Creamos el socket
 
@@ -268,9 +268,48 @@ class client:
     # * @return USER_ERROR if the user is not connected (the message is queued for delivery)
     # * @return ERROR the user does not exist or another error occurred
     @staticmethod
-    def  send(user,  message) :
-        #  Write your code here
-        return client.RC.ERROR
+    def send(user, message):
+        global usuario_conectado
+
+        id = None
+
+        #usuario al que se le quiere enviar el mensaje no existe
+        if usuario_conectado == "":
+            return client.RC.ERROR, id
+
+        sock = client.openSocket(host,port)
+
+        try:
+            #enviamos solicitud de conexión
+            sock.sendall("SEND".encode()+b'\0')
+
+            #recibimos confirmación de la operación
+            print("La operación a realizar es:",client.readResponse(sock))
+
+            #enviamos el usuario 
+            sock.sendall(str(user).encode()+b'\0')
+
+            #enviamos el mensaje 
+            sock.sendall(str(message).encode()+b'\0')
+
+            #Recibimos la confirmación que en este caso es el id asociado al mensaje o error si no existe
+            id = client.readResponse(sock) #respuesta
+            print("Confirmación recibida ",r)
+
+            print("Closing socket")
+            sock.close()
+
+            #exito
+            if ip == "error":
+                return client.RC.ERROR, id
+            else:
+                return client.RC.OK, id
+
+        except:
+            #error
+            print("User error socket")
+            sock.close()
+            return client.RC.ERROR2, id
 
     # *
     # * @param user    - Receiver user name
@@ -358,7 +397,14 @@ class client:
                         if (len(line) >= 3) :
                             #  Remove first two words
                             message = ' '.join(line[2:])
-                            client.send(line[1], message)
+                            var, id = client.send(line[1], message)
+                            var = var.value
+                            if var == 0: #ok
+                                print("SEND OK - MESSAGE "+id)
+                            if var == 1: #usuario no existe
+                                print("SEND FAIL / USER DOES NOT EXIST")
+                            if var == 2: #error
+                                print("SEND FAIL")
                         else :
                             print("Syntax error. Usage: SEND <userName> <message>")
 

@@ -193,12 +193,54 @@ void tratar_peticion (void *s){
 
                         strcpy(buffer,"1");
                     }
-                    
+
                     //enviamos confirmación
                     printf("Vamos a enviar la confirmación: %s\n",buffer);
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
                     printf("Enviado con éxito\n");
                 }
+
+                if (strcmp(buffer,"SEND") == 0){                
+                    /*SEND*/
+
+                    char usuario[256];
+                    char mensaje[256];
+                    
+                    //enviamos confirmación
+                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;} 
+
+                    //obtenemos usuario
+                    if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
+                    printf("Vamos a desconectar al usuario: %s\n",buffer);
+                    strcpy(usuario,buffer);
+
+                    //obtenemos el mensaje
+                    if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
+                    printf("Vamos a desconectar al usuario: %s\n",buffer);
+                    strcpy(mensaje,buffer);
+
+                    //comprobar si existe el usuario
+                    int existe = nodoExiste(cabeza,usuario);
+                    printf("Existe: %d\n",existe);
+
+                    //Metemos el mensaje al la lista del usuario si existe
+                    if (existe == 1){
+                        printf("Introduciendo mensaje al usuario %s \n",usuario);
+                        //Falta introducir el mensaje con su id y ver como vamos a hacer la lista de mensajes
+                        modificarEnLista (cabeza,usuario,"",0,"Desconectado");
+                        imprimirLista(cabeza);
+                        strcpy(buffer,"0");
+                    }
+
+                    if (existe == 0){ //no existe el usuario
+                        printf("No existe el usuario %s\n",buffer);
+                        strcpy(buffer,"error");
+                    }
+
+                    //enviamos confirmación
+                    printf("Vamos a enviar la confirmación: %s\n",buffer);
+                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
+                    printf("Enviado con éxito\n");
 
                 if (strcmp(buffer,"EXIT") == 0){
                         break;
