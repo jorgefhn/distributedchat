@@ -38,6 +38,7 @@ class client:
         sock.connect(server_address)
         return sock
 
+  
 
     @staticmethod
     def listen(host,port):
@@ -188,34 +189,47 @@ class client:
             sock.sendall(str(user).encode())
             sock.sendall(b'\0')
             #enviamos la ip
-            sock.sendall(str(sock.getsockname()[0]).encode())
+
+            ip = str(sock.getsockname()[0])
+            puerto = str(sock.getsockname()[1])
+
+            sock.sendall(ip.encode())
             sock.sendall(b'\0')
             #enviamos el puerto 
-            sock.sendall(str(sock.getsockname()[1]).encode())
+            sock.sendall(puerto.encode())
             sock.sendall(b'\0')
 
             #Recibimos la confirmación
             r = client.readResponse(sock) #respuesta
             print("Confirmación recibida ",r)
 
+            sock.close()
+            if r == "0":
+                usuario_conectado = user
+                sock2 = client.openSocket(ip,0) #
+                server_address = (ip,0)
+                sock.bind(server_address)
+                hilo = threading.Thread(target=client.listen(ip,puerto))
+
+
+
+                return client.RC.OK
+
             if r == "1":
-                sock.close()
                 return client.RC.ERROR
 
+           
 
-            #hilo = threading.Thread(target=client.openNewSocket(str(sock.getsockname()[0]),str(sock.getsockname()[1])))
 
 
             print("Closing socket")
             
-            sock.close()
+            
 
 
 
             #Devolvemos el resultado
-            if r == "0":
-                usuario_conectado = user
-                return client.RC.OK
+            
 
             
 
