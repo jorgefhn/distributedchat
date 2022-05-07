@@ -200,6 +200,8 @@ void tratar_peticion (void *s){
                     printf("Enviado con éxito\n");
                 }
 
+
+                
                 if (strcmp(buffer,"SEND") == 0){                
                     /*SEND*/
 
@@ -240,8 +242,8 @@ void tratar_peticion (void *s){
                     //enviamos confirmación
                     printf("Vamos a enviar la confirmación: %s\n",buffer);
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
-                    printf("Enviado con éxito\n");
-
+                    printf("Enviado con éxito\n");   
+                }
                 if (strcmp(buffer,"EXIT") == 0){
                         break;
                 }
@@ -319,4 +321,4 @@ int main(int argc, char *argv[]){
 	close (sd);
 
      	return(0);
-} /*fin main */
+} 

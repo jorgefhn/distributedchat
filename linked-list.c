@@ -12,6 +12,7 @@ int insertarEnLista (tpuntero *cabeza, char* user){
     strcpy(nuevo->ip,"0");
     nuevo->puerto = 0;
     strcpy(nuevo->estado,"Desconectado");
+    
     nuevo->last_recv = 0; //por defecto, último mensaje recibido
     
     nuevo->sig = *cabeza; //Le asignamos al siguiente el valor de cabeza

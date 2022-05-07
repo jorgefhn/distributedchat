@@ -1,3 +1,5 @@
+#include "mensaje.h"
+
 #define MAXSIZE 256
 
 typedef struct snodo{ //snodo es el nombre de la estructura
@@ -6,7 +8,7 @@ typedef struct snodo{ //snodo es el nombre de la estructura
     char ip[MAXSIZE];
     int puerto;
     int last_recv;
-    //falta lista de mensajes recibidos
+    tpuntero_mensaje cabeza;
 
 
     

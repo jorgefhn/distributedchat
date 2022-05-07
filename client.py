@@ -367,15 +367,19 @@ class client:
 
                     elif(line[0]=="CONNECT") :
                         if (len(line) == 2) :
-                            var = client.connect(line[1],host,port).value
-                            if var == 0: #ok
-                                print("CONNECT OK")
-                            if (var) == 1: #usuario no existe
-                                print("CONNECT FAIL, USER DOES NOT EXIST")
-                            if (var) == 2: #error, usuario ya conectado
+                            if usuario_conectado != "":
                                 print("USER ALREADY CONNECTED")
-                            if (var) == 3: #error
-                                print("CONNECT FAIL")
+
+                            else:
+                                var = client.connect(line[1],host,port).value
+                                if var == 0: #ok
+                                    print("CONNECT OK")
+                                if (var) == 1: #usuario no existe
+                                    print("CONNECT FAIL, USER DOES NOT EXIST")
+                                if (var) == 2: #error, usuario ya conectado
+                                    print("USER ALREADY CONNECTED")
+                                if (var) == 3: #error
+                                    print("CONNECT FAIL")
                         else :
                             print("Syntax error. Usage: CONNECT <userName>")
 
