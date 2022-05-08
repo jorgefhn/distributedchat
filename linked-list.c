@@ -163,8 +163,11 @@ int sendMessageEnLista(tnodo *cabeza, char * user, char * remitente, char * mens
     tnodo *actual = cabeza;
     while(actual != NULL){ //Mientras cabeza no sea NULL
         if (strcmp(actual->user,user) == 0){  
-            insertarEnListaMessage(&(actual->cabeza_mensaje),remitente,mensaje,actual->last_recv);
             actual->last_recv = actual->last_recv +1;
+            if(actual->last_recv == 0){ //si se desborda
+                actual->last_recv = actual->last_recv +1;
+            } 
+            insertarEnListaMessage(&(actual->cabeza_mensaje),remitente,mensaje,actual->last_recv);
             printf("Aquí llega en el send message\n");
 
             imprimirListaMessage(actual->cabeza_mensaje);
