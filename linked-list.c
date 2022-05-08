@@ -3,9 +3,6 @@
 #include <string.h>
 #define MAXSIZE	256
 
-
-
-
 int insertarEnLista(tpuntero *cabeza, char* user){
     tpuntero nuevo; //Creamos un nuevo nodo
     nuevo = malloc(sizeof(tnodo)); //Utilizamos malloc para reservar memoria para ese nodo
@@ -23,8 +20,6 @@ int insertarEnLista(tpuntero *cabeza, char* user){
     return 0;
 }
 
-
-
 int borrarLista(tpuntero *cabeza){ 
     tpuntero actual; //Puntero auxiliar para eliminar correctamente la lista
   
@@ -36,7 +31,6 @@ int borrarLista(tpuntero *cabeza){
 
     return(0);
 }
-
 
 int imprimirLista(tnodo *cabeza){
     printf("Resultado de la lista: \n");
@@ -124,14 +118,12 @@ int insertarEnListaMessage(tpuntero_mensaje *cabeza, char* remitente, char* mens
     strcpy(nuevo->user_sender,remitente);
     nuevo->id = id;
     
-    
     nuevo->sig = *cabeza; //Le asignamos al siguiente el valor de cabeza
     *cabeza = nuevo; //Cabeza pasa a ser el ultimo nodo agregado
     //falta indicar si la clave ya existe devolviendo -1
     
     return 0;
 }
-
 
 int imprimirListaMessage(tmensaje *cabeza){
     printf("Resultado de la lista: \n");
@@ -157,20 +149,24 @@ int imprimirListaMessage(tmensaje *cabeza){
     return(0);
 }
 
-
-int sendMessageEnLista(tnodo *cabeza, char * user, char * remitente, char * mensaje){
+int sendMessageEnLista(tnodo *cabeza, char * destinatario, char * remitente, char * mensaje){
     //busca por un usuario y lo modifica
     tnodo *actual = cabeza;
     while(actual != NULL){ //Mientras cabeza no sea NULL
-        if (strcmp(actual->user,user) == 0){  
+        if (strcmp(actual->user,destinatario) == 0){  
             actual->last_recv = actual->last_recv +1;
             if(actual->last_recv == 0){ //si se desborda
                 actual->last_recv = actual->last_recv +1;
             } 
             insertarEnListaMessage(&(actual->cabeza_mensaje),remitente,mensaje,actual->last_recv);
-            printf("Aquí llega en el send message\n");
 
             imprimirListaMessage(actual->cabeza_mensaje);
+            if(strcmp(actual->estado,"Conectado") == 0){
+                printf("SEND MESSAGE %d FROM %s TO %s\n", actual->last_recv, remitente, destinatario);
+            }
+            else{
+                printf("MESSAGE %d FROM %s TO %s STORED\n", actual->last_recv, remitente, destinatario);
+            }
             break;
             
 
@@ -179,7 +175,6 @@ int sendMessageEnLista(tnodo *cabeza, char * user, char * remitente, char * mens
     }
 
     if (actual == NULL){
-
         return -1; //código de operacion 8: no encontrado
     }
     return(0);
