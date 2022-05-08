@@ -105,6 +105,8 @@ void tratar_peticion (void *s){
                     char usuario[256];
                     char ip[256];
                     int puerto;
+                    struct sockaddr_in server_addr;
+                    //struct hostent *hp;
 
                     //enviamos confirmación
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
@@ -124,6 +126,8 @@ void tratar_peticion (void *s){
 
                     printf("Puerto %d : \n",puerto);
 
+                    
+
                     //comprobar si existe el usuario
                     int existe = nodoExiste(cabeza,usuario);
 
@@ -132,11 +136,24 @@ void tratar_peticion (void *s){
                         printf("CONNECT %s OK\n",usuario);
                         modificarEnLista (cabeza,usuario,ip,puerto,"Conectado");
                         int sock = socket(AF_INET, SOCK_STREAM, 0);
-                        struct sockaddr_in server_addr;
+
+
+                        bzero((char *)&server_addr, sizeof(server_addr));
+                        
+                        struct hostent *hp;
+                        hp = gethostbyname(ip); //en ip hay un string con la ip del cliente
                         memcpy (&(server_addr.sin_addr), ip, 4);
+
+
                         server_addr.sin_family = AF_INET;
                         server_addr.sin_port = htons(puerto);
-   	                connect(sock, (struct sockaddr *) &server_addr,  sizeof(server_addr));
+
+                        int c = connect(sock, (struct sockaddr *) &server_addr,  sizeof(server_addr));
+                        if (c == 1){
+                                printf("Error\n");
+                        }
+
+                        printf("Aquí bien\n");
                         strcpy(buffer,"hola mi bro");
                         printf("hola\n");
                         sendMessage(sock, (char *) &buffer, sizeof(char));
