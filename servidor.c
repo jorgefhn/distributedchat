@@ -116,10 +116,13 @@ void tratar_peticion (void *s){
                     //obtenemos la ip
                     if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
                     strcpy(ip,buffer);
+                    printf("IP %s : \n",ip);
 
                     //obtenemos el puerto
                     if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
                     puerto = atoi(buffer);
+
+                    printf("Puerto %d : \n",puerto);
 
                     //comprobar si existe el usuario
                     int existe = nodoExiste(cabeza,usuario);
@@ -136,7 +139,7 @@ void tratar_peticion (void *s){
    	                connect(sock, (struct sockaddr *) &server_addr,  sizeof(server_addr));
                         strcpy(buffer,"hola mi bro");
                         printf("hola\n");
-                        if ((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}
+                        sendMessage(sock, (char *) &buffer, sizeof(char));
                         printf("adios\n");
                         imprimirLista(cabeza);
                         strcpy(buffer,"0");
