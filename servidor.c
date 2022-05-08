@@ -128,6 +128,16 @@ void tratar_peticion (void *s){
                     if (existe == 1){
                         printf("CONNECT %s OK\n",usuario);
                         modificarEnLista (cabeza,usuario,ip,puerto,"Conectado");
+                        int sock = socket(AF_INET, SOCK_STREAM, 0);
+                        struct sockaddr_in server_addr;
+                        memcpy (&(server_addr.sin_addr), ip, 4);
+                        server_addr.sin_family = AF_INET;
+                        server_addr.sin_port = htons(puerto);
+   	                connect(sock, (struct sockaddr *) &server_addr,  sizeof(server_addr));
+                        strcpy(buffer,"hola mi bro");
+                        printf("hola\n");
+                        if ((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}
+                        printf("adios\n");
                         imprimirLista(cabeza);
                         strcpy(buffer,"0");
                     }
