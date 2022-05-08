@@ -15,7 +15,7 @@ pthread_mutex_t m;
 pthread_cond_t c;
 int busy;
 
-tpuntero cabeza;
+tpuntero cabeza; 
 
 void tratar_peticion (void *s){
         char buffer[256];
@@ -23,9 +23,9 @@ void tratar_peticion (void *s){
         int sc = (* (int *)s);
         busy = false;
         pthread_cond_signal(&c);
-        pthread_mutex_unlock(&m);
+        pthread_mutex_unlock(&m); 
 
-        char user[256];
+        char user[256];  
 
         
         printf("Aqui\n");
@@ -55,6 +55,7 @@ void tratar_peticion (void *s){
 
                         //registramos usuario
                         if (existe == 0){
+
                                 printf("No existe el usuario %s\n",buffer);
                                 insertarEnLista(&cabeza,user);
                                 strcpy(buffer,"0");
@@ -76,7 +77,7 @@ void tratar_peticion (void *s){
                 
                 }
                 
-                if (strcmp(buffer,"UNREGISTER") == 0){
+                if (strcmp(buffer,"UNREGISTER") == 0){ 
                     /*UNREGISTER*/
                     //enviamos confirmación
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
@@ -202,37 +203,45 @@ void tratar_peticion (void *s){
 
 
                 
-                if (strcmp(buffer,"SEND") == 0){                
+                if (strcmp(buffer,"SEND") == 0){                  
                     /*SEND*/
 
-                    char usuario[256];
+                    char remitente[256];
+                    char destinatario[256];
                     char mensaje[256];
+                   
                     
                     //enviamos confirmación
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;} 
 
-                    //obtenemos usuario
+                    //obtenemos usuario que envía
                     if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
-                    printf("Vamos a desconectar al usuario: %s\n",buffer);
-                    strcpy(usuario,buffer);
+                    printf("Vamos a enviar al usuario: %s\n",buffer);
+                    strcpy(remitente,buffer);
+
+                    //obtenemos el usuario destinatario
+                    if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
+                    printf("Vamos a enviar mensaje: %s\n",buffer);
+                    strcpy(destinatario,buffer);
 
                     //obtenemos el mensaje
                     if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
-                    printf("Vamos a desconectar al usuario: %s\n",buffer);
+                    printf("Vamos a enviar mensaje: %s\n",buffer);
                     strcpy(mensaje,buffer);
 
                     //comprobar si existe el usuario
-                    int existe = nodoExiste(cabeza,usuario);
+                    int existe = nodoExiste(cabeza,destinatario);
                     printf("Existe: %d\n",existe);
 
                     //Metemos el mensaje al la lista del usuario si existe
                     if (existe == 1){
-                        printf("Introduciendo mensaje al usuario %s \n",usuario);
+                        printf("Introduciendo mensaje al usuario %s \n",destinatario);
                         //Falta introducir el mensaje con su id y ver como vamos a hacer la lista de mensajes
-                        modificarEnLista (cabeza,usuario,"",0,"Desconectado");
-                        imprimirLista(cabeza);
+                        sendMessageEnLista(cabeza,destinatario,remitente,mensaje);
+                        //imprimirLista(cabeza); //imprime la lista de usuarios
+                        
                         strcpy(buffer,"0");
-                    }
+                    } 
 
                     if (existe == 0){ //no existe el usuario
                         printf("No existe el usuario %s\n",buffer);

@@ -5,7 +5,8 @@
 
 
 
-int insertarEnLista (tpuntero *cabeza, char* user){
+
+int insertarEnLista(tpuntero *cabeza, char* user){
     tpuntero nuevo; //Creamos un nuevo nodo
     nuevo = malloc(sizeof(tnodo)); //Utilizamos malloc para reservar memoria para ese nodo
     strcpy(nuevo->user,user);
@@ -116,10 +117,74 @@ int numItems(tnodo *cabeza){
     return(counter);         
 }
 
-int modificarEnLista (tnodo *cabeza, char * user, char * ip, int port, char * estado){
-    //busca por una key y devuelve la peticion
+int insertarEnListaMessage(tpuntero_mensaje *cabeza, char* remitente, char* mensaje, int id){
+    tpuntero_mensaje nuevo; //Creamos un nuevo nodo
+    nuevo = malloc(sizeof(tmensaje)); //Utilizamos malloc para reservar memoria para ese nodo
+    strcpy(nuevo->message,mensaje);
+    strcpy(nuevo->user_sender,remitente);
+    nuevo->id = id;
+    
+    
+    nuevo->sig = *cabeza; //Le asignamos al siguiente el valor de cabeza
+    *cabeza = nuevo; //Cabeza pasa a ser el ultimo nodo agregado
+    //falta indicar si la clave ya existe devolviendo -1
+    
+    return 0;
+}
+
+
+int imprimirListaMessage(tmensaje *cabeza){
+    printf("Resultado de la lista: \n");
+    tmensaje *actual = cabeza;
+    printf("----------------------------------\n");
+
+    while(actual != NULL){ //Mientras cabeza no sea NULL
+        char* mensaje = actual -> message;
+        char* sender = actual -> user_sender;
+        int id = actual -> id;
+        
+
+        printf("ID DEL MENSAJE:%d\n",id); //Imprimimos el usuario
+        printf("MENSAJE:%s\n",mensaje);
+        printf("REMITENTE:%s\n",sender);
+        printf("----------------------------------\n");
+
+
+                
+        actual = actual->sig; //Pasamos al siguiente nodo
+    }
+
+    return(0);
+}
+
+
+int sendMessageEnLista(tnodo *cabeza, char * user, char * remitente, char * mensaje){
+    //busca por un usuario y lo modifica
     tnodo *actual = cabeza;
-  
+    while(actual != NULL){ //Mientras cabeza no sea NULL
+        if (strcmp(actual->user,user) == 0){  
+            insertarEnListaMessage(&(actual->cabeza_mensaje),remitente,mensaje,actual->last_recv);
+            actual->last_recv = actual->last_recv +1;
+            printf("Aquí llega en el send message\n");
+
+            imprimirListaMessage(actual->cabeza_mensaje);
+            break;
+            
+
+        }
+        actual = actual->sig; //Cabeza avanza 1 posicion en la lista
+    }
+
+    if (actual == NULL){
+
+        return -1; //código de operacion 8: no encontrado
+    }
+    return(0);
+}
+
+int modificarEnLista (tnodo *cabeza, char * user, char * ip, int port, char * estado){
+    //busca por un usuario y lo modifica
+    tnodo *actual = cabeza;
     while(actual != NULL){ //Mientras cabeza no sea NULL
         if (strcmp(actual->user,user) == 0){
             strcpy(actual->ip,ip);
@@ -137,10 +202,40 @@ int modificarEnLista (tnodo *cabeza, char * user, char * ip, int port, char * es
     return(0);
 }
 
+//----------------------------------------------------------------
+
+int borrarPorUsuarioMessage(tpuntero_mensaje *cabeza,int id){
+    //borra un nodo por su clave
+    
+    tpuntero_mensaje actual = *cabeza;
+    tpuntero_mensaje prev_node;
+
+    
+    while(actual != NULL){ //Mientras cabeza no sea NULL
+        if (actual->id == id){
+            if (actual == *cabeza){
+                *cabeza = (*cabeza)->sig;
+                free(actual);  
+            }
+            else{
+                prev_node->sig = actual->sig;
+                free(actual);
+            }
+        
+            break;
+        }
+        prev_node = actual;
+        actual = actual -> sig;
+        }
+    if(actual == NULL){
+        return -1;
+    
+    }
+    return 0;    
+}
+
+
 /*
-
-
-
 struct snodo buscarEnLista (tnodo *cabeza, int key){
     //busca por una key y devuelve la peticion
     tnodo *actual = cabeza;

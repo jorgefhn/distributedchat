@@ -268,7 +268,7 @@ class client:
     # * @return USER_ERROR if the user is not connected (the message is queued for delivery)
     # * @return ERROR the user does not exist or another error occurred
     @staticmethod
-    def send(user, message):
+    def send(user, message,host,port):
         global usuario_conectado
 
         id = None
@@ -286,7 +286,12 @@ class client:
             #recibimos confirmación de la operación
             print("La operación a realizar es:",client.readResponse(sock))
 
-            #enviamos el usuario 
+            
+
+            #enviamos el usuario que envía el mensaje
+            sock.sendall(str(usuario_conectado).encode()+b'\0')
+
+            #enviamos el usuario al que se le envia el mensaje 
             sock.sendall(str(user).encode()+b'\0')
 
             #enviamos el mensaje 
@@ -294,13 +299,13 @@ class client:
 
             #Recibimos la confirmación que en este caso es el id asociado al mensaje o error si no existe
             id = client.readResponse(sock) #respuesta
-            print("Confirmación recibida ",r)
+            print("Confirmación recibida ",id)
 
             print("Closing socket")
             sock.close()
 
             #exito
-            if ip == "error":
+            if id == "error":
                 return client.RC.ERROR, id
             else:
                 return client.RC.OK, id
@@ -401,7 +406,7 @@ class client:
                         if (len(line) >= 3) :
                             #  Remove first two words
                             message = ' '.join(line[2:])
-                            var, id = client.send(line[1], message)
+                            var, id = client.send(line[1], message,host,port)
                             var = var.value
                             if var == 0: #ok
                                 print("SEND OK - MESSAGE "+id)
