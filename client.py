@@ -184,18 +184,31 @@ class client:
             r = client.readResponse(sock) #respuesta
             print("Confirmación recibida ",r)
 
-            print("Closing socket")
+            print("Closing socket del servidor")
             sock.close()
 
             if r == "0":
                 usuario_conectado = user
                 print("EL usuario "+user+" se ha conectado")
                 sock2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                server_address = (ip, 0)
+                sock2.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+                server_address = (ip, int(puerto))
+
+                print('voy a escuchar en {} port {}'.format(*server_address))
+
+                print("Aquí es donde da el error")
+
                 sock2.bind(server_address)
+
+                print("Aquí")
                 sock2.listen(1)
+                print("Antes")
+
                 ip = str(sock2.getsockname()[0])
-                puerto = str(sock2.getsockname()[1])
+                puerto = int(sock2.getsockname()[1])
+
+                print(ip,puerto+" de nuevo")
                 hilo = threading.Thread(target=client.listen)
                 hilo.start()
 

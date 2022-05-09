@@ -9,6 +9,7 @@
 #include "linked-list.h"
 #include <pthread.h>
 #include <stdbool.h>
+#include <netdb.h>
 
 #define NUM_THREADS 10
 pthread_mutex_t m;
@@ -105,7 +106,9 @@ void tratar_peticion (void *s){
                     char usuario[256];
                     char ip[256];
                     int puerto;
+                    int sd;
                     struct sockaddr_in server_addr;
+                    struct hostent *hp;
                     //struct hostent *hp;
 
                     //enviamos confirmación
@@ -126,7 +129,10 @@ void tratar_peticion (void *s){
 
                     printf("Puerto %d : \n",puerto);
 
-                    
+
+                    strcpy(buffer,"0");
+                    //confirmación
+                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}
 
                     //comprobar si existe el usuario
                     int existe = nodoExiste(cabeza,usuario);
@@ -137,20 +143,25 @@ void tratar_peticion (void *s){
                         modificarEnLista (cabeza,usuario,ip,puerto,"Conectado");
                         int sock = socket(AF_INET, SOCK_STREAM, 0);
 
-
+                        sd = socket(AF_INET, SOCK_STREAM, 0);
+                        if (sd == 1) {
+                                printf("Error en socket\n");
+                        }
                         bzero((char *)&server_addr, sizeof(server_addr));
                         
-                        struct hostent *hp;
                         hp = gethostbyname(ip); //en ip hay un string con la ip del cliente
-                        memcpy (&(server_addr.sin_addr), ip, 4);
-
+                        if (hp == NULL) {
+                                printf("Error en gethostbyname\n");
+	                }
+                        
+   	                memcpy (&(server_addr.sin_addr), hp->h_addr, hp->h_length);
 
                         server_addr.sin_family = AF_INET;
                         server_addr.sin_port = htons(puerto);
 
                         int c = connect(sock, (struct sockaddr *) &server_addr,  sizeof(server_addr));
-                        if (c == 1){
-                                printf("Error\n");
+                        if (c == -1){
+                                printf("Error en connect\n");
                         }
 
                         printf("Aquí bien\n");
