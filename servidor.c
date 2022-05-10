@@ -118,28 +118,32 @@ void tratar_peticion (void *s){
                     if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
                     strcpy(usuario,buffer);
 
-                    //obtenemos la ip
-                    if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
-                    strcpy(ip,buffer);
-                    printf("IP %s : \n",ip);
-
-                    //obtenemos el puerto
-                    if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
-                    puerto = atoi(buffer);
-
-                    printf("Puerto %d : \n",puerto);
-
-
-                    strcpy(buffer,"0");
-                    //confirmación
-                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}
-
                     //comprobar si existe el usuario
                     int existe = nodoExiste(cabeza,usuario);
+                    
+                    if (existe == 1){
+                        strcpy(buffer,"0");
+                    }
+                    else{
+                        strcpy(buffer,"1");
+                        printf("CONNECT %s FAIL\n",buffer);
+                    }
+                    //enviamos confirmación
+                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}
 
                     //Cambiamos los valores del usuario si existe y si está conectado
                     if (existe == 1){
                         printf("CONNECT %s OK\n",usuario);
+                        //obtenemos la ip
+                        if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
+                        strcpy(ip,buffer);
+                        printf("IP %s : \n",ip);
+
+                        //obtenemos el puerto
+                        if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
+                        puerto = atoi(buffer);
+                        printf("Puerto %d : \n",puerto);
+                        
                         modificarEnLista (cabeza,usuario,ip,puerto,"Conectado");
                         int sock = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -170,17 +174,7 @@ void tratar_peticion (void *s){
                         sendMessage(sock, (char *) &buffer, sizeof(char));
                         printf("adios\n");
                         imprimirLista(cabeza);
-                        strcpy(buffer,"0");
                     }
-
-                    if (existe == 0){ //no existe el usuario
-                        printf("CONNECT %s FAIL\n",buffer);
-
-                        strcpy(buffer,"1");
-                    }
-
-                    //enviamos confirmación
-                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}
                 }
 
                 if (strcmp(buffer,"DISCONNECT") == 0){                
