@@ -47,11 +47,10 @@ class client:
         global sock2
         try:
             while(1):
-                connection, client_address = sock2.accept()
-                print("connection from: ",client_address)
+                connection, = sock2.accept()
+                print("connection from: ",sock2.getsockname()[1])
                 mensaje = client.readResponse(connection)
                 print(mensaje)
-
         except:
             print("Conexión terminada")
             sock2.close()
@@ -161,61 +160,64 @@ class client:
 
         sock = client.openSocket(host,port)
         
-        #try:
-        #enviamos solicitud de conexión
-        sock.sendall("CONNECT".encode()+b'\0')
-        
-        #recibimos confirmación de la operación
-        print("La operación a realizar es: ",client.readResponse(sock))
-        
-        #enviamos el usuario 
-        sock.sendall(str(user).encode()+b'\0')
-
-        #Recibimos la confirmación
-        r = client.readResponse(sock) #respuesta
-        print("Confirmación recibida ",r)
-        
-        ip = str(sock.getsockname()[0])
-        
-        if r == "0":
-            usuario_conectado = user
-            print("EL usuario "+user+" se ha conectado")
-            sock2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock2.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        
-            server_address = (ip, 0)
-
-            sock2.bind(server_address)
+        try:
+            #enviamos solicitud de conexión
+            sock.sendall("CONNECT".encode()+b'\0')
             
-            sock2.listen(1)
+            #recibimos confirmación de la operación
+            print("La operación a realizar es: ",client.readResponse(sock))
+            
+            #enviamos el usuario 
+            sock.sendall(str(user).encode()+b'\0')
 
-            ip = str(sock2.getsockname()[0])
-            puerto = str(sock2.getsockname()[1])
+            #Recibimos la confirmación
+            r = client.readResponse(sock) #respuesta
+            print("Confirmación recibida ",r)
+            
+            ip = str(sock.getsockname()[0])
+            
+            if r == "0":
+                usuario_conectado = user
+                print("EL usuario "+user+" se ha conectado")
+                sock2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock2.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            
+                server_address = (ip, 0)
 
-            print('voy a escuchar en  port ',ip,puerto)
+                sock2.bind(server_address)
+                
+                
 
-            #enviamos la ip
-            sock.sendall(ip.encode()+b'\0')
+                ip = str(sock2.getsockname()[0])
+                puerto = str(sock2.getsockname()[1])
 
-            #enviamos el puerto 
-            sock.sendall(puerto.encode()+b'\0')
+                print('voy a escuchar en  port ',server_address)
 
-            hilo = threading.Thread(target=client.listen)
-            hilo.start()
+                print("Puerto del socket: ",sock2.getsockname()[1])
 
-            return client.RC.OK
+                #enviamos la ip
+                sock.sendall(ip.encode()+b'\0')
 
-        if r == "1":
-            return client.RC.ERROR1
+                #enviamos el puerto 
+                sock.sendall(puerto.encode()+b'\0')
 
-        print("Closing socket del servidor")
-        sock.close()
+                sock2.listen(1)
+
+                hilo = threading.Thread(target=client.listen)
+                hilo.start()
+
+                return client.RC.OK
+
+            if r == "1":
+                return client.RC.ERROR1
+
+            print("Closing socket del servidor")
+            sock.close()
         
-        #except:
-
-        print("User error socket")
-        sock.close()
-        return client.RC.ERROR3
+        except:
+            print("User error socket")
+            sock.close()
+            return client.RC.ERROR3
         
        
 
@@ -235,35 +237,39 @@ class client:
 
         sock = client.openSocket(host,port)
 
-        try:
-            #enviamos solicitud de conexión
-            sock.sendall("DISCONNECT".encode()+b'\0')
-            
-            #recibimos confirmación de la operación
-            print("La operación a realizar es:",client.readResponse(sock))
+        #try:
+        #enviamos solicitud de conexión
+        sock.sendall("DISCONNECT".encode()+b'\0')
+        
+        #recibimos confirmación de la operación
+        print("La operación a realizar es:",client.readResponse(sock))
 
-            #enviamos el usuario 
-            sock.sendall(str(user).encode()+b'\0')
+        #enviamos el usuario 
+        sock.sendall(str(user).encode()+b'\0')
 
-            #Recibimos la confirmación
-            r = client.readResponse(sock) #respuesta
-            print("Confirmación recibida ",r)
+        #Recibimos la confirmación
+        r = client.readResponse(sock) #respuesta
+        print("Confirmación recibida ",r)
 
-            print("Closing socket")
-            sock.close()
+        print("Closing socket")
+        sock.close()
 
-            sock2.shutdown(socket.SHUT_RDWR)
-            hilo.join()
+        print("Sock 2 puerto:" ,sock2.getsockname()[1])
+        print("el shutdown", sock2.shutdown(socket.SHUT_RDWR))
+        print("aquí ")
+        hilo.join()
+        print("Después del hilo")
+        
 
-            #Devolvemos el resultado
-            if r == "0":
-                usuario_conectado = ""
-                return client.RC.OK
+        #Devolvemos el resultado
+        if r == "0":
+            usuario_conectado = ""
+            return client.RC.OK
 
-            if r == "1":
-                return client.RC.ERROR1
+        if r == "1":
+            return client.RC.ERROR1
 
-        except:
+        #except:
             print("User error socket")
             sock.close()
             return client.RC.ERROR3
@@ -292,9 +298,7 @@ class client:
             sock.sendall("SEND".encode()+b'\0')
 
             #recibimos confirmación de la operación
-            print("La operación a realizar es:",client.readResponse(sock))
-
-            
+            print("La operacion a realizar es:",client.readResponse(sock))
 
             #enviamos el usuario que envía el mensaje
             sock.sendall(str(usuario_conectado).encode()+b'\0')
