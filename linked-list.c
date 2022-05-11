@@ -111,6 +111,51 @@ int numItems(tnodo *cabeza){
     return(counter);         
 }
 
+
+int numItemsMessage(tnodo *cabeza,char* usuario){
+    tnodo *actual = cabeza;
+
+    while(actual != NULL){ //Mientras cabeza no sea NULL
+        if (strcmp(actual->user,usuario) == 0){
+            //ha encontrado al usuario
+
+            tmensaje *msg_actual = actual->cabeza_mensaje;
+            int counter = 0;
+            while(msg_actual != NULL){ //Mientras cabeza no sea NULL
+                counter++;
+                msg_actual = msg_actual -> sig;
+            }
+            return(counter);         
+        }
+    }
+}
+
+char* obtenerUltimoMensaje(tnodo *cabeza,char* usuario,int num_items){
+    //obtiene el último mensaje recibido por un usuario
+    int counter;
+    counter = 1;
+    char mensaje[256];
+    tnodo *actual = cabeza;
+    while(actual != NULL){ 
+        if (strcmp(actual->user,usuario) == 0){
+            tmensaje *msg_actual = actual->cabeza_mensaje;
+            while (counter < num_items){
+                msg_actual = msg_actual->sig;
+                counter++;
+            }
+            //toma el último mensjae
+            mensaje = *msg_actual->message+";"+*msg_actual->user_sender;
+            return mensaje; 
+
+        }
+    }
+    return("Error");
+
+    //devolver algo
+
+
+}
+
 int insertarEnListaMessage(tpuntero_mensaje *cabeza, char* remitente, char* mensaje, int id){
     tpuntero_mensaje nuevo; //Creamos un nuevo nodo
     nuevo = malloc(sizeof(tmensaje)); //Utilizamos malloc para reservar memoria para ese nodo
@@ -202,35 +247,7 @@ int modificarEnLista (tnodo *cabeza, char * user, char * ip, int port, char * es
 
 //----------------------------------------------------------------
 
-int borrarPorUsuarioMessage(tpuntero_mensaje *cabeza,int id){
-    //borra un nodo por su clave
-    
-    tpuntero_mensaje actual = *cabeza;
-    tpuntero_mensaje prev_node;
 
-    
-    while(actual != NULL){ //Mientras cabeza no sea NULL
-        if (actual->id == id){
-            if (actual == *cabeza){
-                *cabeza = (*cabeza)->sig;
-                free(actual);  
-            }
-            else{
-                prev_node->sig = actual->sig;
-                free(actual);
-            }
-        
-            break;
-        }
-        prev_node = actual;
-        actual = actual -> sig;
-        }
-    if(actual == NULL){
-        return -1;
-    
-    }
-    return 0;    
-}
 
 
 /*

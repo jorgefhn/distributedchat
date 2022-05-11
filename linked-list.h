@@ -7,6 +7,9 @@ int borrarLista (tpuntero *cabeza);
 int nodoExiste(tnodo *cabeza,char* user);
 int borrarPorUsuario(tpuntero*cabeza, char *user);
 int numItems(tnodo *cabeza);
+int numItemsMessage(tnodo *cabeza,char * usuario);
+char* obtenerUltimoMensaje(tnodo *cabeza,char* usuario,int num_items);
+
 int modificarEnLista(tnodo *cabeza, char * user, char * ip, int port, char* estado);
 int insertarEnListaMessage(tpuntero_mensaje *cabeza, char* remitente, char* mensaje, int id);
 int imprimirListaMessage(tmensaje *cabeza);

@@ -169,18 +169,26 @@ void tratar_peticion (void *s){
                         }
 
                         
-                        printf("Aquí bien\n");
+                        printf("Aquí bien\n"); 
+
+                        //iterar sobre la lista de mensajes cuyo destinatario es CONECTADO
+                        int num_items = numItemsMessage(cabeza,usuario);
+                        printf("Número de mensajes pendientes: %d\n",num_items);
+                        char m[256];
+                        for (int i = 0; i < num_items; i++){
+                                m = obtenerUltimoMensaje(cabeza,usuario,num_items);
+                                printf("Llega aquí\n");
+                                //strcpy(buffer,m->message);
+                                sendMessage(sock, buffer, strlen(buffer)+1);
+
+                        }
 
                         strcpy(buffer,"hola mi bro");
 
-                        //iterar sobre la lista de mensajes cuyo destinatario es CONECTADO
 
-                        
+
                         printf("hola\n");
-                        int a = sendMessage(sock, buffer, strlen(buffer)+1);
-                        if (a == -1){
-                                printf("Error en el send message de hola mi bro\n");
-                        }
+                        
                         printf("adios\n");
                         imprimirLista(cabeza);
                     }
