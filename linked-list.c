@@ -36,11 +36,19 @@ int imprimirLista(tnodo *cabeza){
     printf("Resultado de la lista: \n");
     tnodo *actual = cabeza;
     printf("----------------------------------\n");
+    char* mensaje[256];
+    char* sender[256];
 
     while(actual != NULL){ //Mientras cabeza no sea NULL
         char* user = actual -> user;
         char* ip = actual -> ip;
         int port = actual -> puerto;
+        
+    
+        strcpy(*mensaje,actual->cabeza_mensaje->message);//errror
+        strcpy(*sender,actual->cabeza_mensaje->user_sender);
+
+       
         
 
         printf("USER:%s\n",user); //Imprimimos el usuario
@@ -120,6 +128,8 @@ int numItemsMessage(tnodo *cabeza,char* usuario){
             //ha encontrado al usuario
 
             tmensaje *msg_actual = actual->cabeza_mensaje;
+            
+
             int counter = 0;
             while(msg_actual != NULL){ //Mientras cabeza no sea NULL
                 counter++;
@@ -128,13 +138,15 @@ int numItemsMessage(tnodo *cabeza,char* usuario){
             return(counter);         
         }
     }
+    return 0;
 }
 
 char* obtenerUltimoMensaje(tnodo *cabeza,char* usuario,int num_items){
     //obtiene el último mensaje recibido por un usuario
     int counter;
     counter = 1;
-    char mensaje[256];
+    char* mensaje;
+    mensaje = malloc(sizeof(char)*256);
     tnodo *actual = cabeza;
     while(actual != NULL){ 
         if (strcmp(actual->user,usuario) == 0){
@@ -142,12 +154,15 @@ char* obtenerUltimoMensaje(tnodo *cabeza,char* usuario,int num_items){
             while (counter < num_items){
                 msg_actual = msg_actual->sig;
                 counter++;
-            }
+            } 
             //toma el último mensjae
-            mensaje = *msg_actual->message+";"+*msg_actual->user_sender;
-            return mensaje; 
+            sprintf(mensaje,"%s;%s\n",msg_actual->message,msg_actual->user_sender);
+            //mensaje = *msg_actual->message+";"+*msg_actual->user_sender;
 
         }
+
+            return mensaje;
+    
     }
     return("Error");
 
@@ -173,11 +188,16 @@ int insertarEnListaMessage(tpuntero_mensaje *cabeza, char* remitente, char* mens
 int imprimirListaMessage(tmensaje *cabeza){
     printf("Resultado de la lista: \n");
     tmensaje *actual = cabeza;
+    char sender[256];
+    char mensaje[256];
+
     printf("----------------------------------\n");
 
     while(actual != NULL){ //Mientras cabeza no sea NULL
-        char* mensaje = actual -> message;
-        char* sender = actual -> user_sender;
+
+        strcpy(mensaje,actual->message);
+        strcpy(sender,actual->user_sender);
+        
         int id = actual -> id;
         
 
