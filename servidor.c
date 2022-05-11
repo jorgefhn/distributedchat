@@ -168,10 +168,19 @@ void tratar_peticion (void *s){
                                 printf("Error en connect\n");
                         }
 
+                        
                         printf("Aquí bien\n");
+
                         strcpy(buffer,"hola mi bro");
+
+                        //iterar sobre la lista de mensajes cuyo destinatario es CONECTADO
+
+                        
                         printf("hola\n");
-                        sendMessage(sock, (char *) &buffer, sizeof(char));
+                        int a = sendMessage(sock, buffer, strlen(buffer)+1);
+                        if (a == -1){
+                                printf("Error en el send message de hola mi bro\n");
+                        }
                         printf("adios\n");
                         imprimirLista(cabeza);
                     }

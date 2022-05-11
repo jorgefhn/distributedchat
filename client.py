@@ -3,11 +3,13 @@ import argparse
 import socket
 import sys
 import threading
+from time import sleep
+from threading import Semaphore
 
 usuario_conectado = ""
 sock2 = None
 hilo = None
-
+s = Semaphore()
 class client:
 
     # ******************** TYPES *********************
@@ -43,14 +45,16 @@ class client:
   
 
     @staticmethod
-    def listen():
+    def listen_s():
         global sock2
         try:
             while(1):
-                connection, = sock2.accept()
-                print("connection from: ",sock2.getsockname()[1])
+                connection, client_address = sock2.accept()
+                print("connection from: ",client_address)
                 mensaje = client.readResponse(connection)
-                print(mensaje)
+                s.acquire()
+                print(mensaje)  
+                s.release()
         except:
             print("Conexión terminada")
             sock2.close()
@@ -186,8 +190,6 @@ class client:
 
                 sock2.bind(server_address)
                 
-                
-
                 ip = str(sock2.getsockname()[0])
                 puerto = str(sock2.getsockname()[1])
 
@@ -203,8 +205,10 @@ class client:
 
                 sock2.listen(1)
 
-                hilo = threading.Thread(target=client.listen)
+                hilo = threading.Thread(target=client.listen_s)
                 hilo.start()
+
+
 
                 return client.RC.OK
 
@@ -218,10 +222,6 @@ class client:
             print("User error socket")
             sock.close()
             return client.RC.ERROR3
-        
-       
-
-
     # *
     # * @param user - User name to disconnect from the system
     # * 
@@ -237,39 +237,41 @@ class client:
 
         sock = client.openSocket(host,port)
 
-        #try:
-        #enviamos solicitud de conexión
-        sock.sendall("DISCONNECT".encode()+b'\0')
-        
-        #recibimos confirmación de la operación
-        print("La operación a realizar es:",client.readResponse(sock))
+        try:
+            #enviamos solicitud de conexión
+            sock.sendall("DISCONNECT".encode()+b'\0')
+            
+            #recibimos confirmación de la operación
+            print("La operación a realizar es:",client.readResponse(sock))
 
-        #enviamos el usuario 
-        sock.sendall(str(user).encode()+b'\0')
+            #enviamos el usuario 
+            sock.sendall(str(user).encode()+b'\0')
 
-        #Recibimos la confirmación
-        r = client.readResponse(sock) #respuesta
-        print("Confirmación recibida ",r)
+            #Recibimos la confirmación
+            r = client.readResponse(sock) #respuesta
+            print("Confirmación recibida ",r)
 
-        print("Closing socket")
-        sock.close()
+            print("Closing socket")
+            sock.close()
 
-        print("Sock 2 puerto:" ,sock2.getsockname()[1])
-        print("el shutdown", sock2.shutdown(socket.SHUT_RDWR))
-        print("aquí ")
-        hilo.join()
-        print("Después del hilo")
-        
+            print("Sock 2 puerto:" ,sock2.getsockname()[1])
+            print("el shutdown", sock2.shutdown(socket.SHUT_RDWR))
+           
 
-        #Devolvemos el resultado
-        if r == "0":
-            usuario_conectado = ""
-            return client.RC.OK
+            hilo.join()
+            
+            print("Después del hilo")
+            
+            
+            #Devolvemos el resultado
+            if r == "0":
+                usuario_conectado = ""
+                return client.RC.OK
 
-        if r == "1":
-            return client.RC.ERROR1
+            if r == "1":
+                return client.RC.ERROR1
 
-        #except:
+        except:
             print("User error socket")
             sock.close()
             return client.RC.ERROR3
@@ -284,7 +286,7 @@ class client:
     @staticmethod
     def send(user, message,host,port):
         global usuario_conectado
-
+        global hilo
         id = None
 
         #usuario al que se le quiere enviar el mensaje no existe
