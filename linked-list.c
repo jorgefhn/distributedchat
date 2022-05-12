@@ -3,6 +3,35 @@
 #include <string.h>
 #define MAXSIZE	256
 
+int imprimirListaMessage(tmensaje *cabeza){
+    printf("Resultado de la lista: \n");
+    tmensaje *actual = cabeza;
+    char sender[256];
+    char mensaje[256];
+
+    printf("----------------------------------\n");
+
+    while(actual != NULL){ //Mientras cabeza no sea NULL
+
+        strcpy(mensaje,actual->message);
+        strcpy(sender,actual->user_sender);
+        
+        int id = actual -> id;
+        
+
+        printf("ID DEL MENSAJE:%d\n",id); //Imprimimos el usuario
+        printf("MENSAJE:%s\n",mensaje);
+        printf("REMITENTE:%s\n",sender);
+        printf("----------------------------------\n");
+
+
+                
+        actual = actual->sig; //Pasamos al siguiente nodo
+    }
+
+    return(0);
+}
+
 int insertarEnLista(tpuntero *cabeza, char* user){
     tpuntero nuevo; //Creamos un nuevo nodo
     nuevo = malloc(sizeof(tnodo)); //Utilizamos malloc para reservar memoria para ese nodo
@@ -36,26 +65,17 @@ int imprimirLista(tnodo *cabeza){
     printf("Resultado de la lista: \n");
     tnodo *actual = cabeza;
     printf("----------------------------------\n");
-    char* mensaje[256];
-    char* sender[256];
-
+    
     while(actual != NULL){ //Mientras cabeza no sea NULL
         char* user = actual -> user;
         char* ip = actual -> ip;
         int port = actual -> puerto;
         
-    
-        strcpy(*mensaje,actual->cabeza_mensaje->message);//errror
-        strcpy(*sender,actual->cabeza_mensaje->user_sender);
-
-       
-        
-
         printf("USER:%s\n",user); //Imprimimos el usuario
         printf("IP:%s\n",ip);
         printf("PUERTO:%d\n",port);
+        imprimirListaMessage(actual->cabeza_mensaje);
         printf("----------------------------------\n");
-
 
                 
         actual = actual->sig; //Pasamos al siguiente nodo
@@ -183,35 +203,6 @@ int insertarEnListaMessage(tpuntero_mensaje *cabeza, char* remitente, char* mens
     //falta indicar si la clave ya existe devolviendo -1
     
     return 0;
-}
-
-int imprimirListaMessage(tmensaje *cabeza){
-    printf("Resultado de la lista: \n");
-    tmensaje *actual = cabeza;
-    char sender[256];
-    char mensaje[256];
-
-    printf("----------------------------------\n");
-
-    while(actual != NULL){ //Mientras cabeza no sea NULL
-
-        strcpy(mensaje,actual->message);
-        strcpy(sender,actual->user_sender);
-        
-        int id = actual -> id;
-        
-
-        printf("ID DEL MENSAJE:%d\n",id); //Imprimimos el usuario
-        printf("MENSAJE:%s\n",mensaje);
-        printf("REMITENTE:%s\n",sender);
-        printf("----------------------------------\n");
-
-
-                
-        actual = actual->sig; //Pasamos al siguiente nodo
-    }
-
-    return(0);
 }
 
 int sendMessageEnLista(tnodo *cabeza, char * destinatario, char * remitente, char * mensaje){
