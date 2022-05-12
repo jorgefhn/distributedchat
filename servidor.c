@@ -105,6 +105,7 @@ void tratar_peticion (void *s){
 
                     char usuario[256];
                     char ip[256];
+                    char mensaje[256];
                     int puerto;
                     int sd;
                     struct sockaddr_in server_addr;
@@ -134,6 +135,8 @@ void tratar_peticion (void *s){
                     //Cambiamos los valores del usuario si existe y si está conectado
                     if (existe == 1){
                         printf("CONNECT %s OK\n",usuario);
+
+                        
                         //obtenemos la ip
                         if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
                         strcpy(ip,buffer);
@@ -146,6 +149,16 @@ void tratar_peticion (void *s){
                         
                         modificarEnLista (cabeza,usuario,ip,puerto,"Conectado");
                         int sock = socket(AF_INET, SOCK_STREAM, 0);
+
+                        int n = numItemsMessage(cabeza,usuario);
+                        printf("Número de mensajes pendientes: %d\n",n);
+                        //leer la lista de mensajes pendientes
+
+                        strcpy(mensaje,obtenerUltimoMensaje(cabeza,usuario));
+                        printf("Mensaje: %s\n",mensaje);
+
+
+
 
                         sd = socket(AF_INET, SOCK_STREAM, 0);
                         if (sd == 1) {
@@ -169,19 +182,16 @@ void tratar_peticion (void *s){
                         }
 
                         
-                        printf("Aquí bien\n");
 
                         strcpy(buffer,"hola mi bro");
 
                         //iterar sobre la lista de mensajes cuyo destinatario es CONECTADO
 
                         
-                        printf("hola\n");
                         int a = sendMessage(sock, buffer, strlen(buffer)+1);
                         if (a == -1){
                                 printf("Error en el send message de hola mi bro\n");
                         }
-                        printf("adios\n");
                         imprimirLista(cabeza);
                     }
                 }

@@ -142,11 +142,11 @@ int numItems(tnodo *cabeza){
 
 int numItemsMessage(tnodo *cabeza,char* usuario){
     tnodo *actual = cabeza;
-
+    printf("Entra en el num items\n");
     while(actual != NULL){ //Mientras cabeza no sea NULL
         if (strcmp(actual->user,usuario) == 0){
             //ha encontrado al usuario
-
+            printf("Lo encuentra\n");
             tmensaje *msg_actual = actual->cabeza_mensaje;
             
 
@@ -155,36 +155,43 @@ int numItemsMessage(tnodo *cabeza,char* usuario){
                 counter++;
                 msg_actual = msg_actual -> sig;
             }
+            printf("Lo encuentra\n");
+
             return(counter);         
         }
+        actual = actual->sig;
+
     }
+    
     return 0;
 }
 
-char* obtenerUltimoMensaje(tnodo *cabeza,char* usuario,int num_items){
+char* obtenerUltimoMensaje(tnodo *cabeza,char* usuario){
     //obtiene el último mensaje recibido por un usuario
-    int counter;
-    counter = 1;
-    char* mensaje;
-    mensaje = malloc(sizeof(char)*256);
+    char mensaje[1024];
+    
     tnodo *actual = cabeza;
+
     while(actual != NULL){ 
         if (strcmp(actual->user,usuario) == 0){
-            tmensaje *msg_actual = actual->cabeza_mensaje;
-            while (counter < num_items){
-                msg_actual = msg_actual->sig;
-                counter++;
-            } 
-            //toma el último mensjae
-            sprintf(mensaje,"%s;%s\n",msg_actual->message,msg_actual->user_sender);
-            //mensaje = *msg_actual->message+";"+*msg_actual->user_sender;
+            
+            if (actual->cabeza_mensaje != NULL){ //hay algun mensaje
+                tmensaje *msg_actual = actual->cabeza_mensaje;
+                while (msg_actual->sig != NULL){
+                    msg_actual = msg_actual->sig;
+                } 
+                //toma el último mensjae
+                strcpy(mensaje,msg_actual->message);
+                return mensaje;
+                //mensaje = *msg_actual->message+";"+*msg_actual->user_sender;
 
+            }
+            return("NO HAY MENSAJES");
         }
-
-            return mensaje;
-    
+        actual = actual->sig;
     }
     return("Error");
+
 
     //devolver algo
 
