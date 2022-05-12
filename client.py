@@ -52,7 +52,7 @@ class client:
                 connection, client_address = sock2.accept()
                 print("connection from: ",client_address)
                 mensaje = client.readResponse(connection)
-                print("hola")
+                print("hola aqui")
                 s.acquire()
                 print(mensaje)  
                 s.release()

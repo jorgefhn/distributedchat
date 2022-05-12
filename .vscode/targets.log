@@ -6,7 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Thu May 12 00:13:20 2022
+# Make data base, printed on Thu May 12 23:46:15 2022
 
 # Variables
 
@@ -49,7 +49,7 @@ GDM_LANG = es
 # environment
 VSCODE_NLS_CONFIG = {"locale":"es","availableLanguages":{"*":"es"},"_languagePackId":"125a9a608456aa5e8a25d0a18c7b1d68.es","_translationsConfigFile":"/home/jorge/.config/Code/clp/125a9a608456aa5e8a25d0a18c7b1d68.es/tcf.json","_cacheRoot":"/home/jorge/.config/Code/clp/125a9a608456aa5e8a25d0a18c7b1d68.es","_resolvedLanguagePackCoreLocation":"/home/jorge/.config/Code/clp/125a9a608456aa5e8a25d0a18c7b1d68.es/da15b6fd3ef856477bf6f4fb29ba1b7af717770d","_corruptedFile":"/home/jorge/.config/Code/clp/125a9a608456aa5e8a25d0a18c7b1d68.es/corrupted.info","_languagePackSupport":true}
 # environment
-JOURNAL_STREAM = 8:37880
+JOURNAL_STREAM = 8:50518
 # makefile (from 'Makefile', line 6)
 CFLAGS = -Wall  -g
 # environment
@@ -77,7 +77,7 @@ VSCODE_VERBOSE_LOGGING = true
 # environment
 _ = /snap/code/96/usr/share/code/code
 # environment
-MANAGERPID = 1657
+MANAGERPID = 1665
 # environment
 LESSOPEN = | /usr/bin/lesspipe %s
 # environment
@@ -93,7 +93,7 @@ PATH = /home/jorge/.local/bin:/home/jorge/.local/bin:/usr/local/sbin:/usr/local/
 # environment
 GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
 # environment
-SESSION_MANAGER = local/jorge-legion:@/tmp/.ICE-unix/1839,unix/jorge-legion:/tmp/.ICE-unix/1839
+SESSION_MANAGER = local/jorge-legion:@/tmp/.ICE-unix/1859,unix/jorge-legion:/tmp/.ICE-unix/1859
 # environment
 XDG_RUNTIME_DIR = /run/user/1000
 # environment
@@ -111,7 +111,7 @@ DISABLE_WAYLAND = 1
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # environment
-INVOCATION_ID = bb6a5b3d901343039993e8b4b39320d2
+INVOCATION_ID = 2a15f11e33af44b88243d89acc869b75
 # makefile (from 'Makefile', line 8)
 LDFLAGS = -L$(INSTALL_PATH)/lib/
 # environment
@@ -129,7 +129,7 @@ XDG_SESSION_DESKTOP = ubuntu
 # environment
 SSH_AUTH_SOCK = /run/user/1000/keyring/ssh
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 8950
+GIO_LAUNCHED_DESKTOP_FILE_PID = 4811
 # automatic
 %F = $(notdir $%)
 # environment
@@ -143,7 +143,7 @@ PWD = /home/jorge/PRACTICA_FINAL_SSDD
 # default
 .LOADED := 
 # environment
-SSH_AGENT_PID = 1799
+SSH_AGENT_PID = 1811
 # environment
 ORIGINAL_XDG_CURRENT_DESKTOP = ubuntu:GNOME
 # environment
@@ -195,7 +195,7 @@ CC = gcc
 # environment
 GNOME_SHELL_SESSION_MODE = ubuntu
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-50471eeb-2140-46c4-a91d-5575c1e0db93.sock
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-937d8342-d50a-46b2-b5d3-392b3cfd41f1.sock
 # default
 MAKE_VERSION := 4.2.1
 # environment
@@ -269,7 +269,7 @@ GJS_DEBUG_OUTPUT = stderr
 # environment
 LANG = C
 # environment
-VSCODE_PID = 8999
+VSCODE_PID = 4859
 # variable set hash-table stats:
 # Load=130/1024=13%, Rehash=0, Collisions=15/156=10%
 
@@ -288,11 +288,11 @@ VSCODE_PID = 8999
 %.o: %.c
 #  recipe to execute (from 'Makefile', line 20):
 	$(CC) $(CFLAGS) $(CFLAGS) -c $<
- 
 
 # 1 implicit rules, 0 (0.0%) terminal.
 
 # Files
+ 
 
 all: servidor
 #  Phony target (prerequisite of .PHONY).
@@ -322,7 +322,7 @@ Makefile:
 servidor.o: servidor.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'servidor'
-#  Last modified 2022-05-12 00:08:17.174160902
+#  Last modified 2022-05-12 00:21:25.604136116
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 20):
@@ -330,7 +330,7 @@ servidor.o: servidor.c
 
 servidor: servidor.o lines.o
 #  Implicit rule search has not been done.
-#  Last modified 2022-05-12 00:08:17.218160743
+#  Last modified 2022-05-12 00:21:25.656136003
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 17):
@@ -339,7 +339,7 @@ servidor: servidor.o lines.o
 lines.o: lines.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'lines'
-#  Last modified 2022-05-12 00:08:17.198160816
+#  Last modified 2022-05-12 00:21:25.632136055
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 20):
@@ -387,6 +387,6 @@ lines.c:
 # strcache performance: lookups = 51 / hit rate = 47%
 # hash-table stats:
 # Load=27/8192=0%, Rehash=0, Collisions=1/51=2%
-# Finished Make data base on Thu May 12 00:13:20 2022
+# Finished Make data base on Thu May 12 23:46:15 2022
 
  
