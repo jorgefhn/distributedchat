@@ -266,6 +266,7 @@ void tratar_peticion (void *s){
                    
                     
                     //enviamos confirmación
+                    strcpy(buffer,"SEND MESSAGE");
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;} 
 
                     //obtenemos usuario que envía
