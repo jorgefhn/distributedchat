@@ -148,53 +148,55 @@ void tratar_peticion (void *s){
                         printf("Puerto %d : \n",puerto);
                         
                         modificarEnLista (cabeza,usuario,ip,puerto,"Conectado");
-                        int sock = socket(AF_INET, SOCK_STREAM, 0);
+                        
 
                         int n = numItemsMessage(cabeza,usuario);
                         printf("Número de mensajes pendientes: %d\n",n);
                         //leer la lista de mensajes pendientes
 
-                        printf("Aqui llega en el servidor\n");
-                        int mensaje_funciona = obtenerUltimoMensaje(cabeza,usuario,mensaje);
-                        printf("Mensaje funciona: %d\n",mensaje_funciona);
-                        printf("Mensaje en el servidor: %s\n",mensaje);
 
+                        for(int i=0; i<n; i++){
 
+                                int sock = socket(AF_INET, SOCK_STREAM, 0);
 
+                                sd = socket(AF_INET, SOCK_STREAM, 0);
+                                if (sd == 1) {
+                                        printf("Error en socket\n");
+                                }
+                                bzero((char *)&server_addr, sizeof(server_addr));
+                                
+                                hp = gethostbyname(ip); //en ip hay un string con la ip del cliente
+                                if (hp == NULL) {
+                                        printf("Error en gethostbyname\n");
+                                }
+                                
+                                memcpy (&(server_addr.sin_addr), hp->h_addr, hp->h_length);
 
-                        sd = socket(AF_INET, SOCK_STREAM, 0);
-                        if (sd == 1) {
-                                printf("Error en socket\n");
+                                server_addr.sin_family = AF_INET;
+                                server_addr.sin_port = htons(puerto);
+
+                                int c = connect(sock, (struct sockaddr *) &server_addr,  sizeof(server_addr));
+                                if (c == -1){
+                                        printf("Error en connect\n");
+                                }
+
+                        
+                                int mensaje_funciona = obtenerUltimoMensaje(cabeza,usuario,mensaje);
+                                printf("Mensaje funciona: %d\n",mensaje_funciona);
+                                printf("Mensaje en el servidor: %s\n",mensaje);
+
+                                strcpy(buffer,mensaje);
+
+                                //iterar sobre la lista de mensajes cuyo destinatario es CONECTADO
+                                int a = sendMessage(sock, buffer, strlen(buffer)+1);
+                                if (a == -1){
+                                        printf("Error en el send message de hola mi bro\n");
+                                }
+                                imprimirLista(cabeza);
+                                close(sock); //cerramos esta conexión
                         }
-                        bzero((char *)&server_addr, sizeof(server_addr));
-                        
-                        hp = gethostbyname(ip); //en ip hay un string con la ip del cliente
-                        if (hp == NULL) {
-                                printf("Error en gethostbyname\n");
-	                }
-                        
-   	                memcpy (&(server_addr.sin_addr), hp->h_addr, hp->h_length);
-
-                        server_addr.sin_family = AF_INET;
-                        server_addr.sin_port = htons(puerto);
-
-                        int c = connect(sock, (struct sockaddr *) &server_addr,  sizeof(server_addr));
-                        if (c == -1){
-                                printf("Error en connect\n");
-                        }
 
                         
-
-                        strcpy(buffer,"hola mi bro");
-
-                        //iterar sobre la lista de mensajes cuyo destinatario es CONECTADO
-
-                        
-                        int a = sendMessage(sock, buffer, strlen(buffer)+1);
-                        if (a == -1){
-                                printf("Error en el send message de hola mi bro\n");
-                        }
-                        imprimirLista(cabeza);
                     }
                 }
 

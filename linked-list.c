@@ -41,7 +41,7 @@ int insertarEnLista(tpuntero *cabeza, char* user){
     strcpy(nuevo->estado,"Desconectado");
     
     nuevo->last_recv = 0; //por defecto, último mensaje recibido
-    
+    nuevo->cabeza_mensaje = NULL; //por defecto
     nuevo->sig = *cabeza; //Le asignamos al siguiente el valor de cabeza
     *cabeza = nuevo; //Cabeza pasa a ser el ultimo nodo agregado
     //falta indicar si la clave ya existe devolviendo -1
@@ -168,10 +168,6 @@ int numItemsMessage(tnodo *cabeza,char* usuario){
 
 int obtenerUltimoMensaje(tnodo *cabeza,char* usuario,char* mensaje_param){
     //obtiene el último mensaje recibido por un usuario
-    char mensaje[1024];
-
-
-    
     tnodo *actual = cabeza;
 
     while(actual != NULL){ 
@@ -179,18 +175,20 @@ int obtenerUltimoMensaje(tnodo *cabeza,char* usuario,char* mensaje_param){
             
             if (actual->cabeza_mensaje != NULL){ //hay algun mensaje
                 tmensaje *msg_actual = actual->cabeza_mensaje;
+                tmensaje *aux = actual->cabeza_mensaje;
                 while (msg_actual->sig != NULL){
+                    aux = msg_actual; 
                     msg_actual = msg_actual->sig;
                 } 
 
-                //toma el último mensjae
-                
-                printf("User sender: %s\n",msg_actual->user_sender);
-                printf("Mensaje: %s\n",msg_actual->message);
+                //borramos ese nodo
 
+                //toma el último mensjae
                 sprintf(mensaje_param,"%s;%s",msg_actual->message,msg_actual->user_sender);
-                printf("Mensaje en el linked list: %s\n",mensaje);
-                printf("Aquí llega en el linked list\n");
+                printf("Mensaje en el linked list: %s\n",mensaje_param);
+                aux->sig = NULL;
+                free(msg_actual);
+
 
                 return 0;
 
