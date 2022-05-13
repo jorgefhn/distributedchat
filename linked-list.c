@@ -174,6 +174,7 @@ int obtenerUltimoMensaje(tnodo *cabeza,char* usuario,char* mensaje_param){
         if (strcmp(actual->user,usuario) == 0){
             
             if (actual->cabeza_mensaje != NULL){ //hay algun mensaje
+                printf("último mensaje\n");
                 tmensaje *msg_actual = actual->cabeza_mensaje;
                 tmensaje *aux = actual->cabeza_mensaje;
                 while (msg_actual->sig != NULL){
@@ -181,13 +182,28 @@ int obtenerUltimoMensaje(tnodo *cabeza,char* usuario,char* mensaje_param){
                     msg_actual = msg_actual->sig;
                 } 
 
+                
+
                 //borramos ese nodo
 
                 //toma el último mensjae
                 sprintf(mensaje_param,"%s;%s",msg_actual->message,msg_actual->user_sender);
                 printf("Mensaje en el linked list: %s\n",mensaje_param);
-                aux->sig = NULL;
-                free(msg_actual);
+                
+                
+                if (actual->cabeza_mensaje->sig == NULL){
+                    //solo queda uno
+                    free(actual->cabeza_mensaje);
+                    actual->cabeza_mensaje = NULL;
+                }
+                
+
+                else{ //no es el último
+                    aux->sig = NULL;
+                    free(msg_actual);
+
+                }
+                
 
 
                 return 0;
