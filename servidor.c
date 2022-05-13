@@ -264,9 +264,9 @@ void tratar_peticion (void *s){
                     char destinatario[256];
                     char mensaje[256];
                    
-                    
+                    //comprobamos si ambos usuarios están conectados
                     //enviamos confirmación
-                    strcpy(buffer,"SEND MESSAGE");
+                    strcpy(buffer,"SEND");
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;} 
 
                     //obtenemos usuario que envía
@@ -277,6 +277,18 @@ void tratar_peticion (void *s){
                     if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
                     strcpy(destinatario,buffer);
 
+
+                    int both_connected =  comprobarAmbosConectados(cabeza,remitente,destinatario);
+                    if (both_connected == 2){
+                        printf("Ambos usuarios están conectados\n");
+                        
+                    }
+
+                    if (both_connected == 1){
+                        printf("Solo el emisor está conectado\n");
+                    }
+
+                    
                     //obtenemos el mensaje
                     if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
                     strcpy(mensaje,buffer);

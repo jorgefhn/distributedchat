@@ -289,6 +289,36 @@ int modificarEnLista (tnodo *cabeza, char * user, char * ip, int port, char * es
     return(0);
 }
 
+
+int comprobarAmbosConectados(tnodo *cabeza,char* remitente,char* destinatario){
+    //esta función comprueba si remitente y destinatario están conectados a la vez. La ejecuta el remitente, por tanto, éste siempre está conectado.
+    // Devuelve 2 si ambos están conectados, 1 si está solo el remitente y 0 en otro caso.
+    tnodo *actual = cabeza;
+    int counter = 0;
+
+    while(actual != NULL){ //Mientras cabeza no sea NULL
+
+        if (strcmp(actual->user,remitente) == 0){
+            if ((strcmp(actual->ip,"0") != 0) && (actual->puerto != 0)){
+                //ip y puerto != 0 (remitente conectado)
+                counter++;
+            }
+        }
+
+        if (strcmp(actual->user,destinatario) == 0){
+            if ( (strcmp(actual->ip,"0") != 0) && (actual->puerto != 0)){
+                //ip y puerto != 0 (destinatario conectado)
+                counter++;
+            }
+        }
+        actual = actual -> sig;
+
+    }
+
+    return(counter); //no existe           
+
+}
+
 //----------------------------------------------------------------
 
 

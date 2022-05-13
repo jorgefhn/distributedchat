@@ -10,7 +10,7 @@ int numItems(tnodo *cabeza);
 int numItemsMessage(tnodo *cabeza,char * usuario);
 int obtenerUltimoMensaje(tnodo *cabeza,char* usuario,char* mensaje_param,char* id_mensaje,char* usuario_remitente);
 int modificarEnLista(tnodo *cabeza, char * user, char * ip, int port, char* estado);
-
+int comprobarAmbosConectados(tnodo *cabeza,char* remitente,char* destinatario);
 //estas se pueden integrar
 int insertarEnListaMessage(tpuntero_mensaje *cabeza, char* remitente, char* mensaje, int id);
 int imprimirListaMessage(tmensaje *cabeza);
