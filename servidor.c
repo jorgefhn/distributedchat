@@ -105,7 +105,7 @@ void tratar_peticion (void *s){
 
                     char usuario[256];
                     char ip[256];
-                    char mensaje[256];
+                    char mensaje[1024];
                     int puerto;
                     int sd;
                     struct sockaddr_in server_addr;
@@ -154,8 +154,10 @@ void tratar_peticion (void *s){
                         printf("Número de mensajes pendientes: %d\n",n);
                         //leer la lista de mensajes pendientes
 
-                        strcpy(mensaje,obtenerUltimoMensaje(cabeza,usuario));
-                        printf("Mensaje: %s\n",mensaje);
+                        printf("Aqui llega en el servidor\n");
+                        int mensaje_funciona = obtenerUltimoMensaje(cabeza,usuario,mensaje);
+                        printf("Mensaje funciona: %d\n",mensaje_funciona);
+                        printf("Mensaje en el servidor: %s\n",mensaje);
 
 
 

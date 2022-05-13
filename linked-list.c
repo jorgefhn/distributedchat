@@ -166,9 +166,11 @@ int numItemsMessage(tnodo *cabeza,char* usuario){
     return 0;
 }
 
-char* obtenerUltimoMensaje(tnodo *cabeza,char* usuario){
+int obtenerUltimoMensaje(tnodo *cabeza,char* usuario,char* mensaje_param){
     //obtiene el último mensaje recibido por un usuario
     char mensaje[1024];
+
+
     
     tnodo *actual = cabeza;
 
@@ -180,17 +182,26 @@ char* obtenerUltimoMensaje(tnodo *cabeza,char* usuario){
                 while (msg_actual->sig != NULL){
                     msg_actual = msg_actual->sig;
                 } 
+
                 //toma el último mensjae
-                strcpy(mensaje,msg_actual->message);
-                return mensaje;
+                
+                printf("User sender: %s\n",msg_actual->user_sender);
+                printf("Mensaje: %s\n",msg_actual->message);
+
+                sprintf(mensaje_param,"%s;%s",msg_actual->message,msg_actual->user_sender);
+                printf("Mensaje en el linked list: %s\n",mensaje);
+                printf("Aquí llega en el linked list\n");
+
+                return 0;
+
                 //mensaje = *msg_actual->message+";"+*msg_actual->user_sender;
 
             }
-            return("NO HAY MENSAJES");
+            return(-1);
         }
         actual = actual->sig;
     }
-    return("Error");
+    return(-1);
 
 
     //devolver algo
