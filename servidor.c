@@ -106,6 +106,8 @@ void tratar_peticion (void *s){
                     char usuario[256];
                     char ip[256];
                     char mensaje[1024];
+                    char usuario_remitente[256];
+                    char id_mensaje[256];
                     int puerto;
                     int sd;
                     struct sockaddr_in server_addr;
@@ -181,18 +183,38 @@ void tratar_peticion (void *s){
                                 }
 
                         
-                                int mensaje_funciona = obtenerUltimoMensaje(cabeza,usuario,mensaje);
+                                int mensaje_funciona = obtenerUltimoMensaje(cabeza,usuario,mensaje,id_mensaje,usuario_remitente);
+
                                 printf("Mensaje funciona: %d\n",mensaje_funciona);
                                 printf("Mensaje en el servidor: %s\n",mensaje);
+                                printf("Id del mensaje en el servidor: %s\n",id_mensaje);
+                                printf("Emisor del mensaje en el servidor: %s\n",usuario_remitente);
 
-                                strcpy(buffer,mensaje);
+
+                                strcpy(buffer,usuario_remitente);
 
                                 //iterar sobre la lista de mensajes cuyo destinatario es CONECTADO
                                 int a = sendMessage(sock, buffer, strlen(buffer)+1);
                                 if (a == -1){
                                         printf("Error en el send message de hola mi bro\n");
                                 }
+                                strcpy(buffer,id_mensaje);
+
+                                a = sendMessage(sock, buffer, strlen(buffer)+1);
+                                if (a == -1){
+                                        printf("Error en el send message de hola mi bro\n");
+                                }
+
+                                strcpy(buffer,mensaje);
+
+
+                                a = sendMessage(sock, buffer, strlen(buffer)+1);
+                                if (a == -1){
+                                        printf("Error en el send message de hola mi bro\n");
+                                }
                                 imprimirLista(cabeza);
+
+                                //send_message_ack
                                 close(sock); //cerramos esta conexión
                         }
 

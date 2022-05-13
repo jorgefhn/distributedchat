@@ -166,7 +166,7 @@ int numItemsMessage(tnodo *cabeza,char* usuario){
     return 0;
 }
 
-int obtenerUltimoMensaje(tnodo *cabeza,char* usuario,char* mensaje_param){
+int obtenerUltimoMensaje(tnodo *cabeza,char* usuario,char* mensaje_param,char* id_mensaje,char* usuario_remitente){
     //obtiene el último mensaje recibido por un usuario
     tnodo *actual = cabeza;
 
@@ -187,8 +187,9 @@ int obtenerUltimoMensaje(tnodo *cabeza,char* usuario,char* mensaje_param){
                 //borramos ese nodo
 
                 //toma el último mensjae
-                sprintf(mensaje_param,"%s;%s",msg_actual->message,msg_actual->user_sender);
-                printf("Mensaje en el linked list: %s\n",mensaje_param);
+                strcpy(mensaje_param,msg_actual->message);
+                sprintf(id_mensaje,"%d",msg_actual->id);
+                strcpy(usuario,msg_actual->user_sender);
                 
                 
                 if (actual->cabeza_mensaje->sig == NULL){

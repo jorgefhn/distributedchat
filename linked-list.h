@@ -8,8 +8,7 @@ int nodoExiste(tnodo *cabeza,char* user);
 int borrarPorUsuario(tpuntero*cabeza, char *user);
 int numItems(tnodo *cabeza);
 int numItemsMessage(tnodo *cabeza,char * usuario);
-int obtenerUltimoMensaje(tnodo *cabeza,char* usuario,char* mensaje_param);
-
+int obtenerUltimoMensaje(tnodo *cabeza,char* usuario,char* mensaje_param,char* id_mensaje,char* usuario_remitente);
 int modificarEnLista(tnodo *cabeza, char * user, char * ip, int port, char* estado);
 
 //estas se pueden integrar

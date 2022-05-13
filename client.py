@@ -49,12 +49,36 @@ class client:
         global sock2
         try:
             while(1):
+
+
                 connection, client_address = sock2.accept()
                 print("connection from: ",client_address)
+                #información de cada mensaje
+                print("Mensaje recibido:")
+
+                user_sender = client.readResponse(connection)
+                s.acquire()
+                print("User sender: \n",user_sender)  
+                s.release()
+
+                id = client.readResponse(connection)
+                s.acquire()
+                print("Identificador: \n",id)  
+                s.release()
+
+                
                 mensaje = client.readResponse(connection)
                 s.acquire()
-                print(mensaje)  
+                print("Mensaje: \n",mensaje)  
                 s.release()
+
+
+                print("-------------------------------------------------------")
+                
+
+                
+
+
         except:
             print("Conexión terminada")
             sock2.close()

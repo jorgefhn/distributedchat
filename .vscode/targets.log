@@ -6,7 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Fri May 13 09:17:34 2022
+# Make data base, printed on Fri May 13 11:26:12 2022
 
 # Variables
 
@@ -129,7 +129,7 @@ XDG_SESSION_DESKTOP = ubuntu
 # environment
 SSH_AUTH_SOCK = /run/user/1000/keyring/ssh
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 2514
+GIO_LAUNCHED_DESKTOP_FILE_PID = 43659
 # automatic
 %F = $(notdir $%)
 # environment
@@ -195,7 +195,7 @@ CC = gcc
 # environment
 GNOME_SHELL_SESSION_MODE = ubuntu
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-3782dec2-7f7a-425b-a946-25ba62f14a22.sock
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-4f93f1c3-7d34-403f-8563-70963f61dd01.sock
 # default
 MAKE_VERSION := 4.2.1
 # environment
@@ -269,9 +269,9 @@ GJS_DEBUG_OUTPUT = stderr
 # environment
 LANG = C
 # environment
-VSCODE_PID = 2563
+VSCODE_PID = 43711
 # variable set hash-table stats:
-# Load=130/1024=13%, Rehash=0, Collisions=15/156=10%
+# Load=130/1024=13%, Rehash=0, Collisions=15/162=9%
 
 # Pattern-specific Variable Values
 
@@ -284,9 +284,9 @@ VSCODE_PID = 2563
 # 17 files, no impossibilities in 1 directories.
 
 # Implicit Rules
+ 
 
 %.o: %.c
- 
 #  recipe to execute (from 'Makefile', line 20):
 	$(CC) $(CFLAGS) $(CFLAGS) -c $<
 
@@ -300,7 +300,9 @@ all: servidor
 #  Implicit rule search has not been done.
 #  File does not exist.
 #  File has been updated.
-#  Successfully updated.
+#  Needs to be updated (-q is set).
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/6=0%
 
 .PHONY: all clean
 #  Implicit rule search has not been done.
@@ -322,28 +324,45 @@ Makefile:
 servidor.o: servidor.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'servidor'
-#  Last modified 2022-05-13 00:25:45.537465487
+#  Last modified 2022-05-13 10:57:19.863562867
 #  File has been updated.
-#  Successfully updated.
+#  Needs to be updated (-q is set).
+# automatic
+# @ := servidor.o
+# automatic
+# % := 
+# automatic
+# * := servidor
+# automatic
+# + := servidor.c
+# automatic
+# | := 
+# automatic
+# < := servidor.c
+# automatic
+# ^ := servidor.c
+# automatic
+# ? := servidor.c
+# variable set hash-table stats:
+# Load=8/32=25%, Rehash=0, Collisions=1/15=7%
 #  recipe to execute (from 'Makefile', line 20):
 	$(CC) $(CFLAGS) $(CFLAGS) -c $<
 
 servidor: servidor.o lines.o
 #  Implicit rule search has not been done.
-#  Last modified 2022-05-13 00:25:45.573465262
+#  Last modified 2022-05-13 10:57:19.899562937
 #  File has been updated.
-#  Successfully updated.
+#  Needs to be updated (-q is set).
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/6=0%
 #  recipe to execute (from 'Makefile', line 17):
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
-lines.o: lines.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'lines'
-#  Last modified 2022-05-13 00:25:45.557465362
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 20):
-	$(CC) $(CFLAGS) $(CFLAGS) -c $<
+# Not a target:
+lines.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 .DEFAULT:
@@ -354,7 +373,7 @@ lines.o: lines.c
 # Not a target:
 servidor.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-05-13 00:25:41.573490308
+#  Last modified 2022-05-13 11:24:45.80156007
 #  File has been updated.
 #  Successfully updated.
 
@@ -366,27 +385,20 @@ clean:
 #  recipe to execute (from 'Makefile', line 23):
 	rm -f $(BIN_FILES) *.o
 
-# Not a target:
-lines.c:
-#  Implicit rule search has been done.
-#  Last modified 2021-03-01 11:31:35
-#  File has been updated.
-#  Successfully updated.
-
 # files hash-table stats:
-# Load=11/1024=1%, Rehash=0, Collisions=0/36=0%
+# Load=10/1024=1%, Rehash=0, Collisions=0/32=0%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 27 / storage = 231 B / avg = 8 B
-# current buf: size = 8162 B / used = 231 B / count = 27 / avg = 8 B
+# strcache buffers: 1 (0) / strings = 26 / storage = 225 B / avg = 8 B
+# current buf: size = 8162 B / used = 225 B / count = 26 / avg = 8 B
 
-# strcache performance: lookups = 51 / hit rate = 47%
+# strcache performance: lookups = 48 / hit rate = 45%
 # hash-table stats:
-# Load=27/8192=0%, Rehash=0, Collisions=1/51=2%
-# Finished Make data base on Fri May 13 09:17:34 2022
+# Load=26/8192=0%, Rehash=0, Collisions=1/48=2%
+# Finished Make data base on Fri May 13 11:26:12 2022
 
  
