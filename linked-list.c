@@ -177,9 +177,6 @@ int obtenerUltimoMensaje(tnodo *cabeza,char* usuario,char* mensaje_param,char* i
                     aux = msg_actual; 
                     msg_actual = msg_actual->sig;
                 } 
-
-                
-
                 //borramos ese nodo
 
                 //toma el último mensjae
@@ -194,30 +191,19 @@ int obtenerUltimoMensaje(tnodo *cabeza,char* usuario,char* mensaje_param,char* i
                     actual->cabeza_mensaje = NULL;
                 }
                 
-
                 else{ //no es el último
                     aux->sig = NULL;
                     free(msg_actual);
 
                 }
-                
-
 
                 return 0;
-
-                //mensaje = *msg_actual->message+";"+*msg_actual->user_sender;
-
             }
             return(-1);
         }
         actual = actual->sig;
     }
     return(-1);
-
-
-    //devolver algo
-
-
 }
 
 int insertarEnListaMessage(tpuntero_mensaje *cabeza, char* remitente, char* mensaje, int id){
@@ -248,8 +234,6 @@ unsigned int sendMessageEnLista(tnodo *cabeza, char * destinatario, char * remit
             }
             
             insertarEnListaMessage(&(actual->cabeza_mensaje),remitente,mensaje,actual->id_counter);
-
-            imprimirListaMessage(actual->cabeza_mensaje);
 
             return actual->id_counter;
         }
@@ -311,70 +295,8 @@ int obtenerIpYPuerto(tnodo *cabeza,char* destinatario,char *ip_destinatario,int*
             *puerto_destinatario = actual->puerto;
         }
 
-        
         actual = actual -> sig;
-
     }
 
     return 0;
 }
-
-
-
-//----------------------------------------------------------------
-
-
-
-
-/*
-struct snodo buscarEnLista (tnodo *cabeza, int key){
-    //busca por una key y devuelve la peticion
-    tnodo *actual = cabeza;
-    while(actual != NULL){ //Mientras cabeza no sea NULL
-        if (actual->clave == key){
-            break;
-        }
-        actual = actual->sig; //Cabeza avanza 1 posicion en la lista
-    }
-    return(*actual);
-}
-
-int modificarEnLista (tnodo *cabeza, int key, char *value1, int value2, float value3){
-    //busca por una key y devuelve la peticion
-    tnodo *actual = cabeza;
-  
-    while(actual != NULL){ //Mientras cabeza no sea NULL
-        if (actual->clave == key){
-            strcpy(actual->valor1,value1);
-            actual->valor2 = value2;
-            actual->valor3 = value3;
-            break;
-        }
-        actual = actual->sig; //Cabeza avanza 1 posicion en la lista
-    }
-
-    if (actual == NULL){
-
-        return -1; //código de operacion 8: no encontrado
-    }
-    return(0);
-}
- 
-
-
-int nodoExiste(tnodo *cabeza,int key){
-    tnodo *actual = cabeza;
-  
-    while(actual != NULL){ //Mientras cabeza no sea NULL
-        if (actual->clave == key){
-            return(1);
-        }
-
-        actual = actual -> sig;
-
-    }
-
-    return(0); //no existe           
-}
-
-*/

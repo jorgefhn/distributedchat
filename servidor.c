@@ -61,8 +61,6 @@ void tratar_peticion (void *s){
                                 strcpy(buffer,"1");
                         }
 
-                        imprimirLista(cabeza);//opcional
-
                         //enviamos el resultado
                         if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
                 
@@ -81,7 +79,6 @@ void tratar_peticion (void *s){
                     if (existe == 1){
                         printf("UNREGISTER %s OK\n",buffer);
                         borrarPorUsuario(&cabeza,buffer);
-                        imprimirLista(cabeza);
                         strcpy(buffer,"0");
 
                     }
@@ -139,12 +136,10 @@ void tratar_peticion (void *s){
                         //obtenemos la ip
                         if ((readLine(sc, buffer, 256)==-1)){printf("Error\n");break;}
                         strcpy(ip,buffer);
-                        printf("IP %s : \n",ip);
 
                         //obtenemos el puerto
                         if ((readLine(sc, buffer, 256)==-1)){printf("Error\n");break;}
                         puerto = atoi(buffer);
-                        printf("Puerto %d : \n",puerto);
                         
                         //con los datos obtenidos del servidor actualizamos al usuario
                         modificarEnLista(cabeza,usuario,ip,puerto,"Conectado");
@@ -202,6 +197,7 @@ void tratar_peticion (void *s){
                                         if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
                                         
                                         //enviamos el mensaje
+                                        strcpy(buffer,mensaje);
                                         if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                         close(sock); //cerramos esta conexión
@@ -269,7 +265,6 @@ void tratar_peticion (void *s){
                     if (existe == 1){
                         printf("DISCONNECT %s OK\n",usuario);
                         modificarEnLista (cabeza,usuario,"",0,"Desconectado");
-                        imprimirLista(cabeza);
                         strcpy(buffer,"0");
                     }
 
@@ -315,17 +310,7 @@ void tratar_peticion (void *s){
 
                     //comprobar si existe el usuario que recibe
                     int existe2 = nodoExiste(cabeza,destinatario);
-
-                    if(existe1 == 0 && existe2 == 0){
-                        strcpy(buffer,"error");
-                    }
-                    else{
-                            strcpy(buffer,"0");
-                    }
-                    
-                    //enviamos confirmación
-                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
-                    
+ 
                     if (existe1 == 1 && existe2 == 1){
                         //metemos el mesaje en la lista de mensajes del destinatario y sacamos el id del mensaje
                         unsigned int id = sendMessageEnLista(cabeza,destinatario,remitente,mensaje);
@@ -385,7 +370,7 @@ void tratar_peticion (void *s){
                                 //cerramos el socket
                                 close(sock);
 
-                                printf("SEND MESSAGE %s FROM %s TO %s", id_mensaje, remitente, destinatario);
+                                printf("SEND MESSAGE %s FROM %s TO %s\n", id_mensaje, remitente, destinatario);
 
                                 //Una vez enviado el mensaje vamos a enviarle al remitente el ack. Para ello le enviaremos un mensaje al remitente 
                                 //En este caso el remitente está ya conectado por lo que no vamos a meter el mensaje dentro de la lista de mensajes, solo le notificaremos 
@@ -422,10 +407,23 @@ void tratar_peticion (void *s){
                                 close(sock); //cerramos la conexion
                         }
                         else{
-                                printf("MESSAGE %d FROM %s TO %s STORED", id, remitente, destinatario);
+                                printf("MESSAGE %d FROM %s TO %s STORED\n", id, remitente, destinatario);
                         }
-
+                    
+                        strcpy(buffer,"0");
+                        //enviamos confirmación
+                        if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
+                        //enviamos el id
+                        sprintf(id_mensaje,"%d",id);
+                        strcpy(buffer, id_mensaje);
+                        if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
                     }
+                    else{
+                        strcpy(buffer,"1");
+                        //enviamos confirmación
+                        if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
+                    }
+
                 }
                 if (strcmp(buffer,"EXIT") == 0){
                         break;

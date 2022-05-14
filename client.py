@@ -64,12 +64,12 @@ class client:
                     #recibe el mensaje    
                     mensaje = client.readResponse(connection)
 
-                    print("MESSAGE "+ id +" FROM "+ user_sender +":\n"+ mensaje +"\nEND\nc>", end="")
+                    print("MESSAGE "+ id +" FROM "+ user_sender +":\n"+ mensaje +"\nEND\nc>", end=" ")
                 else:
                     #recibe el ack
                     #recibe el id del del mensaje
                     id = client.readResponse(connection)
-                    print("ACK OF MESSAGE "+ id +" RECEIVED\nc>", end="")
+                    print("ACK OF MESSAGE "+ id +" RECEIVED\nc>", end=" ")
                 
         except:
             sock2.close()
@@ -90,6 +90,10 @@ class client:
     @staticmethod
     def register(user,host,port):
         
+        #esta la posibilidad de que el nombre sea "" asique quitamos esa posibilidad
+        if user == "":
+            return client.RC.ERROR2
+            
         sock = client.openSocket(host,port)
         
         try:
@@ -106,6 +110,7 @@ class client:
             if r == "0":
                 return client.RC.OK
 
+            #ya existe un usuario con ese nombre
             if r == "1":
                 return client.RC.ERROR1
 
@@ -266,9 +271,10 @@ class client:
     @staticmethod
     def send(user, message,host,port):
         global usuario_conectado
-        #usuario al que se le quiere enviar el mensaje no existe
-        if usuario_conectado == "":
-            return client.RC.ERROR, id
+        id = ""
+        #cuando se intenta hacer un send sin estar conectado o un send al mismo usuario conectado
+        if usuario_conectado == "" or usuario_conectado == user:
+            return client.RC.ERROR2, id
 
         sock = client.openSocket(host,port)
 
@@ -286,14 +292,15 @@ class client:
             sock.sendall(str(message).encode()+b'\0')
 
             #Recibimos la confirmación
-            id = client.readResponse(sock) #respuesta
+            r = client.readResponse(sock) #respuesta
  
-            sock.close()
-
-            if id == "error":
-                return client.RC.ERROR, id
-            else:
+            if r == "0":
+                id = client.readResponse(sock) #respuesta
                 return client.RC.OK, id
+            else:
+                return client.RC.ERROR1, id
+
+            sock.close()
 
         except:
             #error
@@ -354,19 +361,15 @@ class client:
 
                     elif(line[0]=="CONNECT") :
                         if (len(line) == 2) :
-                            if usuario_conectado != "":
+                            var = client.connect(line[1],host,port).value
+                            if var == 0: #ok
+                                print("CONNECT OK")
+                            if (var) == 1: #usuario no existe
+                                print("CONNECT FAIL, USER DOES NOT EXIST")
+                            if (var) == 2: #error, usuario ya conectado
                                 print("USER ALREADY CONNECTED")
-
-                            else:
-                                var = client.connect(line[1],host,port).value
-                                if var == 0: #ok
-                                    print("CONNECT OK")
-                                if (var) == 1: #usuario no existe
-                                    print("CONNECT FAIL, USER DOES NOT EXIST")
-                                if (var) == 2: #error, usuario ya conectado
-                                    print("USER ALREADY CONNECTED")
-                                if (var) == 3: #error
-                                    print("CONNECT FAIL")
+                            if (var) == 3: #error
+                                print("CONNECT FAIL")
                         else :
                             print("Syntax error. Usage: CONNECT <userName>")
 
@@ -376,9 +379,9 @@ class client:
                             if var == 0: #ok
                                 print("DISCONNECT OK")
                             if (var) == 1: #usuario no existe
-                                print("DISCONNECT FAIL, USER DOES NOT EXIST")
+                                print("DISCONNECT FAIL / USER DOES NOT EXIST")
                             if (var) == 2: #error, usuario no estaba conectado
-                                print("USER NOT CONNECTED")
+                                print("DISCONNECT FAIL / USER NOT CONNECTED")
                             if (var) == 3: #error
                                 print("DISCONNECT FAIL")
                         else :
