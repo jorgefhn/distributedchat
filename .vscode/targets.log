@@ -6,7 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Sat May 14 11:17:00 2022
+# Make data base, printed on Sat May 14 20:12:11 2022
 
 # Variables
 
@@ -49,7 +49,7 @@ GDM_LANG = es
 # environment
 VSCODE_NLS_CONFIG = {"locale":"es","availableLanguages":{"*":"es"},"_languagePackId":"125a9a608456aa5e8a25d0a18c7b1d68.es","_translationsConfigFile":"/home/jorge/.config/Code/clp/125a9a608456aa5e8a25d0a18c7b1d68.es/tcf.json","_cacheRoot":"/home/jorge/.config/Code/clp/125a9a608456aa5e8a25d0a18c7b1d68.es","_resolvedLanguagePackCoreLocation":"/home/jorge/.config/Code/clp/125a9a608456aa5e8a25d0a18c7b1d68.es/da15b6fd3ef856477bf6f4fb29ba1b7af717770d","_corruptedFile":"/home/jorge/.config/Code/clp/125a9a608456aa5e8a25d0a18c7b1d68.es/corrupted.info","_languagePackSupport":true}
 # environment
-JOURNAL_STREAM = 8:51346
+JOURNAL_STREAM = 8:53293
 # makefile (from 'Makefile', line 6)
 CFLAGS = -Wall  -g
 # environment
@@ -77,7 +77,7 @@ VSCODE_VERBOSE_LOGGING = true
 # environment
 _ = /snap/code/96/usr/share/code/code
 # environment
-MANAGERPID = 1601
+MANAGERPID = 1666
 # environment
 LESSOPEN = | /usr/bin/lesspipe %s
 # environment
@@ -93,7 +93,7 @@ PATH = /home/jorge/.local/bin:/home/jorge/.local/bin:/usr/local/sbin:/usr/local/
 # environment
 GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
 # environment
-SESSION_MANAGER = local/jorge-legion:@/tmp/.ICE-unix/1791,unix/jorge-legion:/tmp/.ICE-unix/1791
+SESSION_MANAGER = local/jorge-legion:@/tmp/.ICE-unix/1857,unix/jorge-legion:/tmp/.ICE-unix/1857
 # environment
 XDG_RUNTIME_DIR = /run/user/1000
 # environment
@@ -111,7 +111,7 @@ DISABLE_WAYLAND = 1
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # environment
-INVOCATION_ID = 970b6c06bc824b9993c8fcebce6c6e33
+INVOCATION_ID = 5ef17b7c964c4f2fab9e6bec7551194d
 # makefile (from 'Makefile', line 8)
 LDFLAGS = -L$(INSTALL_PATH)/lib/
 # environment
@@ -129,7 +129,7 @@ XDG_SESSION_DESKTOP = ubuntu
 # environment
 SSH_AUTH_SOCK = /run/user/1000/keyring/ssh
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 2344
+GIO_LAUNCHED_DESKTOP_FILE_PID = 7440
 # automatic
 %F = $(notdir $%)
 # environment
@@ -143,7 +143,7 @@ PWD = /home/jorge/PRACTICA_FINAL_SSDD
 # default
 .LOADED := 
 # environment
-SSH_AGENT_PID = 1746
+SSH_AGENT_PID = 1812
 # environment
 ORIGINAL_XDG_CURRENT_DESKTOP = ubuntu:GNOME
 # environment
@@ -195,7 +195,7 @@ CC = gcc
 # environment
 GNOME_SHELL_SESSION_MODE = ubuntu
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-af99e079-f64a-4c55-b32a-6144ec4dd6aa.sock
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-eb2b5ea6-58e4-4b38-964c-d109711db840.sock
 # default
 MAKE_VERSION := 4.2.1
 # environment
@@ -269,18 +269,18 @@ GJS_DEBUG_OUTPUT = stderr
 # environment
 LANG = C
 # environment
-VSCODE_PID = 2397
+VSCODE_PID = 7491
 # variable set hash-table stats:
-# Load=130/1024=13%, Rehash=0, Collisions=15/162=9%
+# Load=130/1024=13%, Rehash=0, Collisions=15/156=10%
 
 # Pattern-specific Variable Values
 
 # No pattern-specific variable values.
 
 # Directories
-
  
-# . (device 66311, inode 2886679): 19 files, no impossibilities.
+
+# . (device 66311, inode 2624952): 19 files, no impossibilities.
 
 # 19 files, no impossibilities in 1 directories.
 
@@ -300,9 +300,7 @@ all: servidor
 #  Implicit rule search has not been done.
 #  File does not exist.
 #  File has been updated.
-#  Needs to be updated (-q is set).
-# variable set hash-table stats:
-# Load=0/32=0%, Rehash=0, Collisions=0/6=0%
+#  Successfully updated.
 
 .PHONY: all clean
 #  Implicit rule search has not been done.
@@ -317,52 +315,35 @@ all: servidor
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-05-01 13:10:20.339218484
+#  Last modified 2022-05-14 20:12:00.577345968
 #  File has been updated.
 #  Successfully updated.
 
 servidor.o: servidor.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'servidor'
-#  Last modified 2022-05-14 01:48:20.003917684
+#  Last modified 2022-05-14 20:12:00.577345968
 #  File has been updated.
-#  Needs to be updated (-q is set).
-# automatic
-# @ := servidor.o
-# automatic
-# % := 
-# automatic
-# * := servidor
-# automatic
-# + := servidor.c
-# automatic
-# | := 
-# automatic
-# < := servidor.c
-# automatic
-# ^ := servidor.c
-# automatic
-# ? := servidor.c
-# variable set hash-table stats:
-# Load=8/32=25%, Rehash=0, Collisions=1/15=7%
+#  Successfully updated.
 #  recipe to execute (from 'Makefile', line 20):
 	$(CC) $(CFLAGS) $(CFLAGS) -c $<
 
 servidor: servidor.o lines.o
 #  Implicit rule search has not been done.
-#  Last modified 2022-05-14 01:48:20.055917817
+#  Last modified 2022-05-14 20:12:00.577345968
 #  File has been updated.
-#  Needs to be updated (-q is set).
-# variable set hash-table stats:
-# Load=0/32=0%, Rehash=0, Collisions=0/6=0%
+#  Successfully updated.
 #  recipe to execute (from 'Makefile', line 17):
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
-# Not a target:
-lines.o:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
+lines.o: lines.c
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'lines'
+#  Last modified 2022-05-14 20:12:00.577345968
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 20):
+	$(CC) $(CFLAGS) $(CFLAGS) -c $<
 
 # Not a target:
 .DEFAULT:
@@ -373,7 +354,7 @@ lines.o:
 # Not a target:
 servidor.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-05-14 11:17:00.427695751
+#  Last modified 2022-05-14 20:12:00.577345968
 #  File has been updated.
 #  Successfully updated.
 
@@ -385,20 +366,27 @@ clean:
 #  recipe to execute (from 'Makefile', line 23):
 	rm -f $(BIN_FILES) *.o
 
+# Not a target:
+lines.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-14 20:12:00.577345968
+#  File has been updated.
+#  Successfully updated.
+
 # files hash-table stats:
-# Load=10/1024=1%, Rehash=0, Collisions=0/32=0%
+# Load=11/1024=1%, Rehash=0, Collisions=0/36=0%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 28 / storage = 256 B / avg = 9 B
-# current buf: size = 8162 B / used = 256 B / count = 28 / avg = 9 B
+# strcache buffers: 1 (0) / strings = 29 / storage = 262 B / avg = 9 B
+# current buf: size = 8162 B / used = 262 B / count = 29 / avg = 9 B
 
-# strcache performance: lookups = 50 / hit rate = 44%
+# strcache performance: lookups = 53 / hit rate = 45%
 # hash-table stats:
-# Load=28/8192=0%, Rehash=0, Collisions=1/50=2%
-# Finished Make data base on Sat May 14 11:17:00 2022
+# Load=29/8192=0%, Rehash=0, Collisions=1/53=2%
+# Finished Make data base on Sat May 14 20:12:11 2022
 
  

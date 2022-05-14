@@ -184,8 +184,7 @@ void tratar_peticion (void *s){
                                 //obtenemos el último mensaje de la lsita de mensajes (el último el el mensaje más antiguo)
                                 obtenerUltimoMensaje(cabeza,usuario,mensaje,id_mensaje,usuario_remitente);
 
-                                printf("usuario remitente: %s\n", usuario_remitente);
-
+                                if()
                                 //enviamos la operación al hilo del cliente
                                 strcpy(buffer,"SEND MESSAGE");
                                 int a = sendMessage(sock, buffer, strlen(buffer)+1);
@@ -219,44 +218,51 @@ void tratar_peticion (void *s){
                                 //Una vez enviado el mensaje vamos a enviarle al remitente el ack. Para ello deberemos crear una socket que se conecte al hilo del remitente
                                 //si el remitente sigue conectado solo le notificaremos, de lo contrario almacenaremos un mensaje en su lista de mensajes
                                 int conectado = Conectado(cabeza, usuario_remitente);
+                                
                                 if (conectado == 1){
-                                //Sacamos la ip y el puerto del remitente
-                                obtenerIpYPuerto(cabeza,usuario_remitente,ip_remitente,&puerto_remitente);
+                                        //Sacamos la ip y el puerto del remitente
+                                        obtenerIpYPuerto(cabeza,usuario_remitente,ip_remitente,&puerto_remitente);
 
-                                //creamos el socket
-                                sock = socket(AF_INET, SOCK_STREAM, 0);
-                                sd = socket(AF_INET, SOCK_STREAM, 0);
-                                if (sd == 1) {
-                                        printf("Error en socket\n");
-                                }
-                                bzero((char *)&server_addr, sizeof(server_addr));
-                                hp = gethostbyname(ip_remitente); //en ip hay un string con la ip del cliente
-                                if (hp == NULL) {
-                                        printf("Error en gethostbyname\n");
-                                }
-                                memcpy (&(server_addr.sin_addr), hp->h_addr, hp->h_length);
-                                server_addr.sin_family = AF_INET;
-                                server_addr.sin_port = htons(puerto_remitente);
-                                c = connect(sock, (struct sockaddr *) &server_addr,  sizeof(server_addr));
-                                if (c == -1){
-                                        printf("Error en connect\n");
-                                }
+                                        //creamos el socket
+                                        sock = socket(AF_INET, SOCK_STREAM, 0);
+                                        sd = socket(AF_INET, SOCK_STREAM, 0);
+                                        if (sd == 1) {
+                                                printf("Error en socket\n");
+                                        }
+                                        bzero((char *)&server_addr, sizeof(server_addr));
+                                        hp = gethostbyname(ip_remitente); //en ip hay un string con la ip del cliente
+                                        if (hp == NULL) {
+                                                printf("Error en gethostbyname\n");
+                                        }
+                                        memcpy (&(server_addr.sin_addr), hp->h_addr, hp->h_length);
+                                        server_addr.sin_family = AF_INET;
+                                        server_addr.sin_port = htons(puerto_remitente);
+                                        c = connect(sock, (struct sockaddr *) &server_addr,  sizeof(server_addr));
+                                        if (c == -1){
+                                                printf("Error en connect\n");
+                                        }
 
-                                //enviamos la operación al hilo del cliente
-                                strcpy(buffer,"SEND MESS ACK");
-                                a = sendMessage(sock, buffer, strlen(buffer)+1);
-                                if (a == -1){
-                                        printf("Error en el send message de hola mi bro\n");
-                                }
+                                        //enviamos la operación al hilo del cliente
+                                        strcpy(buffer,"SEND MESS ACK");
+                                        a = sendMessage(sock, buffer, strlen(buffer)+1);
+                                        if (a == -1){
+                                                printf("Error en el send message de hola mi bro\n");
+                                        }
 
-                                //enviamos el id del mensaje
-                                strcpy(buffer,id_mensaje);
-                                a = sendMessage(sock, buffer, strlen(buffer)+1);
-                                if (a == -1){
-                                        printf("Error en el send message de hola mi bro\n");
-                                }
+                                        //enviamos el id del mensaje
+                                        strcpy(buffer,id_mensaje);
+                                        a = sendMessage(sock, buffer, strlen(buffer)+1);
+                                        if (a == -1){
+                                                printf("Error en el send message de hola mi bro\n");
+                                        }
 
-                                close(sock); //cerramos la conexion
+                                        close(sock); //cerramos la conexion
+                                }
+                                else{
+                                        //no está conectado el remitente (tiene que almacenar la comprobación como un mensaje)
+                                        sendMessageEnLista(cabeza,usuario_remitente,"",id_mensaje);
+                                        
+                                }
                         }                        
                     }
                 }
@@ -466,6 +472,7 @@ void tratar_peticion (void *s){
         }
         close(sc);
         pthread_exit(NULL);
+        
 }
 int main(int argc, char *argv[]){
         struct sockaddr_in server_addr,  client_addr;
