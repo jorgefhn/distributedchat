@@ -42,7 +42,6 @@ class client:
         server_address = (host,int(port))
         sock.connect(server_address)
         return sock
-
   
     @staticmethod
     def listen():
@@ -93,10 +92,8 @@ class client:
         #esta la posibilidad de que el nombre sea "" asique quitamos esa posibilidad
         if user == "":
             return client.RC.ERROR2
-
-        sock = client.openSocket(host,port)
-        
         try:
+            sock = client.openSocket(host,port)
             #mandamos petición de registro
             sock.sendall("REGISTER".encode()+b'\0')
 
@@ -114,22 +111,18 @@ class client:
             if r == "1":
                 return client.RC.ERROR1
 
+        #si el servidor no está conectado
+        except ConnectionRefusedError as e:
+            return client.RC.ERROR2
         except:
             sock.close()
             return client.RC.ERROR2
 
-    # *
-    # 	 * @param user - User name to unregister from the system
-    # 	 * 
-    # 	 * @return OK if successful
-    # 	 * @return USER_ERROR if the user does not exist
-    # 	 * @return ERROR if another error occurred
     @staticmethod
     def unregister(user,host,port):
 
-        sock = client.openSocket(host,port)
-        
         try:
+            sock = client.openSocket(host,port)
             #mandamos petición de registro
             sock.sendall("UNREGISTER".encode()+b'\0')
 
@@ -146,17 +139,13 @@ class client:
             if r == "1":
                 return client.RC.ERROR1
 
+        #si el servidor no está conectado
+        except ConnectionRefusedError as e:
+            return client.RC.ERROR2
         except:
             sock.close()
             return client.RC.ERROR2
 
-
-    # *
-    # * @param user - User name to connect to the system
-    # * 
-    # * @return OK if successful
-    # * @return USER_ERROR if the user does not exist or if it is already connected
-    # * @return ERROR if another error occurred
     @staticmethod
     def connect(user, host, port):
         global usuario_conectado, sock2, hilo
@@ -164,11 +153,10 @@ class client:
         #comprobamos que ningún usuario esté ya conectado 
         if usuario_conectado == user:
             return client.RC.ERROR2
-
-        #cramos el socket
-        sock = client.openSocket(host,port)
-        
+    
         try:
+            sock = client.openSocket(host,port)
+
             #enviamos solicitud de conexión
             sock.sendall("CONNECT".encode()+b'\0')
             
@@ -213,16 +201,14 @@ class client:
                 return client.RC.ERROR1
 
             sock.close()
-        
+
+        #si el servidor no está conectado
+        except ConnectionRefusedError as e:
+            return client.RC.ERROR3
         except:
             sock.close()
             return client.RC.ERROR3
-    # *
-    # * @param user - User name to disconnect from the system
-    # * 
-    # * @return OK if successful
-    # * @return USER_ERROR if the user does not exist
-    # * @return ERROR if another error occurred
+
     @staticmethod
     def disconnect(user, host, port) :
         global usuario_conectado, sock2, hilo
@@ -230,9 +216,9 @@ class client:
         if usuario_conectado != user:
             return client.RC.ERROR2
 
-        sock = client.openSocket(host,port)
-
         try:
+            sock = client.openSocket(host,port)
+
             #enviamos solicitud de conexión
             sock.sendall("DISCONNECT".encode()+b'\0')
             
@@ -257,17 +243,13 @@ class client:
             if r == "1":
                 return client.RC.ERROR1
 
+        #si el servidor no está conectado
+        except ConnectionRefusedError as e:
+            return client.RC.ERROR3
         except:
             sock.close()
             return client.RC.ERROR3
 
-    # *
-    # * @param user    - Receiver user name
-    # * @param message - Message to be sent
-    # * 
-    # * @return OK if the server had successfully delivered the message
-    # * @return USER_ERROR if the user is not connected (the message is queued for delivery)
-    # * @return ERROR the user does not exist or another error occurred
     @staticmethod
     def send(user, message,host,port):
         global usuario_conectado
@@ -276,9 +258,9 @@ class client:
         if usuario_conectado == "" or usuario_conectado == user:
             return client.RC.ERROR2, id
 
-        sock = client.openSocket(host,port)
-
         try:
+            sock = client.openSocket(host,port)
+
             #enviamos solicitud de conexión
             sock.sendall("SEND".encode()+b'\0')
 
@@ -302,27 +284,19 @@ class client:
 
             sock.close()
 
+        #si el servidor no está conectado
+        except ConnectionRefusedError as e:
+            return client.RC.ERROR2
         except:
             #error
             sock.close()
             return client.RC.ERROR2, id
 
-    # *
-    # * @param user    - Receiver user name
-    # * @param file    - file  to be sent
-    # * @param message - Message to be sent
-    # * 
-    # * @return OK if the server had successfully delivered the message
-    # * @return USER_ERROR if the user is not connected (the message is queued for delivery)
-    # * @return ERROR the user does not exist or another error occurred
     @staticmethod
     def  sendAttach(user,  file,  message) :
         #  Write your code here
         return client.RC.ERROR
 
-    # *
-    # **
-    # * @brief Command interpreter for the client. It calls the protocol functions.
     @staticmethod
     def shell():
 

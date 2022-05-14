@@ -18,6 +18,28 @@ int busy;
 
 tpuntero cabeza; 
 
+int crearsocket(char * ip, int puerto){
+        struct sockaddr_in server_addr;
+        struct hostent *hp;
+        int sock = socket(AF_INET, SOCK_STREAM, 0);
+        if (sock == 1) {
+                printf("Error en socket\n");
+        }
+        bzero((char *)&server_addr, sizeof(server_addr));
+        hp = gethostbyname(ip); //en ip hay un string con la ip del cliente
+        if (hp == NULL) {
+                printf("Error en socket\n");
+        }
+        memcpy (&(server_addr.sin_addr), hp->h_addr, hp->h_length);
+        server_addr.sin_family = AF_INET;
+        server_addr.sin_port = htons(puerto);
+        int c = connect(sock, (struct sockaddr *) &server_addr,  sizeof(server_addr));
+        if (c == -1){
+                printf("Error en socket\n");
+        }
+        return sock;
+}
+
 void tratar_peticion (void *s){
         char buffer[256];
         pthread_mutex_lock(&m);
@@ -104,10 +126,6 @@ void tratar_peticion (void *s){
                     char id_mensaje[256];
                     int puerto;
                     int puerto_remitente;
-                    int sd;
-                    struct sockaddr_in server_addr;
-                    struct hostent *hp;
-  
                     
                     //obtenemos usuario
                     if ((readLine(sc, buffer, 256)==-1)){printf("Error\n");break;}
@@ -150,23 +168,7 @@ void tratar_peticion (void *s){
                         //Vamos a enviar todos los mensajes que tiene el usuario que se acaba de conectar, uno por uno
                         for(int i=0; i<numero_mensajes; i++){
                                 //para cada mensaje creamos el socket que va a enviar el mensaje al hilo del cliente correspondiente
-                                int sock = socket(AF_INET, SOCK_STREAM, 0);
-                                sd = socket(AF_INET, SOCK_STREAM, 0);
-                                if (sd == 1) {
-                                        printf("Error en socket\n");
-                                }
-                                bzero((char *)&server_addr, sizeof(server_addr));
-                                hp = gethostbyname(ip); //en ip hay un string con la ip del cliente
-                                if (hp == NULL) {
-                                        printf("Error en socket\n");
-                                }
-                                memcpy (&(server_addr.sin_addr), hp->h_addr, hp->h_length);
-                                server_addr.sin_family = AF_INET;
-                                server_addr.sin_port = htons(puerto);
-                                int c = connect(sock, (struct sockaddr *) &server_addr,  sizeof(server_addr));
-                                if (c == -1){
-                                        printf("Error en socket\n");
-                                }
+                                int sock = crearsocket(ip, puerto);
                                 
                                 //obtenemos el último mensaje de la lsita de mensajes (el último el el mensaje más antiguo)
                                 obtenerUltimoMensaje(cabeza,usuario,mensaje,id_mensaje,usuario_remitente);
@@ -216,23 +218,7 @@ void tratar_peticion (void *s){
                                         obtenerIpYPuerto(cabeza,usuario_remitente,ip_remitente,&puerto_remitente);
 
                                         //creamos el socket
-                                        sock = socket(AF_INET, SOCK_STREAM, 0);
-                                        sd = socket(AF_INET, SOCK_STREAM, 0);
-                                        if (sd == 1) {
-                                                printf("Error en socket\n");
-                                        }
-                                        bzero((char *)&server_addr, sizeof(server_addr));
-                                        hp = gethostbyname(ip_remitente); //en ip hay un string con la ip del cliente
-                                        if (hp == NULL) {
-                                                printf("Error en socket\n");
-                                        }
-                                        memcpy (&(server_addr.sin_addr), hp->h_addr, hp->h_length);
-                                        server_addr.sin_family = AF_INET;
-                                        server_addr.sin_port = htons(puerto_remitente);
-                                        c = connect(sock, (struct sockaddr *) &server_addr,  sizeof(server_addr));
-                                        if (c == -1){
-                                                printf("Error en socket\n");
-                                        }
+                                        int sock = crearsocket(ip_remitente, puerto_remitente);
 
                                         //enviamos la operación al hilo del cliente
                                         strcpy(buffer,"SEND MESS ACK");
@@ -293,9 +279,6 @@ void tratar_peticion (void *s){
                     char ip_remitente[256];
                     int puerto_destinatario;
                     int puerto_remitente;
-                    int sd;
-                    struct sockaddr_in server_addr;
-                    struct hostent *hp;
 
                     //obtenemos usuario que envía
                     if ((readLine(sc, buffer, 256)==-1)){printf("Error\n");break;}
@@ -327,29 +310,7 @@ void tratar_peticion (void *s){
                                 obtenerIpYPuerto(cabeza,destinatario,ip_destinatario,&puerto_destinatario);
 
                                 //creamos el socket        
-                                int sock = socket(AF_INET, SOCK_STREAM, 0);
-
-                                sd = socket(AF_INET, SOCK_STREAM, 0);
-                                if (sd == 1) {
-                                        printf("Error en socket\n");
-                                }
-                                bzero((char *)&server_addr, sizeof(server_addr));
-                                        
-                                hp = gethostbyname(ip_destinatario); //en ip hay un string con la ip del cliente
-                                if (hp == NULL) {
-                                        printf("Error en socket\n");
-                                }
-                                        
-                                memcpy (&(server_addr.sin_addr), hp->h_addr, hp->h_length);
-
-                                server_addr.sin_family = AF_INET;
-                                server_addr.sin_port = htons(puerto_destinatario);
-
-                                //se conecta al socket del hilo del destinatario
-                                int c = connect(sock, (struct sockaddr *) &server_addr,  sizeof(server_addr));
-                                if (c == -1){
-                                        printf("Error en socket\n");
-                                }
+                                int sock = crearsocket(ip_destinatario, puerto_destinatario);
 
                                 //obtenemos los datos que acabamos de meter en la lista del destinatario
                                 obtenerUltimoMensaje(cabeza,destinatario,mensaje,id_mensaje,remitente);
@@ -385,23 +346,7 @@ void tratar_peticion (void *s){
                                 obtenerIpYPuerto(cabeza,remitente,ip_remitente,&puerto_remitente);
 
                                 //creamos el socket
-                                sock = socket(AF_INET, SOCK_STREAM, 0);
-                                sd = socket(AF_INET, SOCK_STREAM, 0);
-                                if (sd == 1) {
-                                        printf("Error en socket\n");
-                                }
-                                bzero((char *)&server_addr, sizeof(server_addr));
-                                hp = gethostbyname(ip_remitente); //en ip hay un string con la ip del cliente
-                                if (hp == NULL) {
-                                        printf("Error en gethostbyname\n");
-                                }
-                                memcpy (&(server_addr.sin_addr), hp->h_addr, hp->h_length);
-                                server_addr.sin_family = AF_INET;
-                                server_addr.sin_port = htons(puerto_remitente);
-                                c = connect(sock, (struct sockaddr *) &server_addr,  sizeof(server_addr));
-                                if (c == -1){
-                                        printf("Error en connect\n");
-                                }
+                                sock = crearsocket(ip_remitente, puerto_remitente);
 
                                 //enviamos la operación al hilo del cliente
                                 strcpy(buffer,"SEND MESS ACK");
@@ -485,7 +430,6 @@ int main(int argc, char *argv[]){
     	size = sizeof(client_addr);
 
      	while (1){
-    		printf("esperando conexion\n");
     		sc = accept(sd, (struct sockaddr *)&client_addr, (socklen_t *)&size);
                 pthread_create(&thid, &attr, (void *)tratar_peticion, (void *)&sc);
 
