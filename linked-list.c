@@ -257,11 +257,23 @@ int modificarEnLista (tnodo *cabeza, char * user, char * ip, int port, char * es
 
     if (actual == NULL){
 
-        return -1; //código de operacion 8: no encontrado
+        return -1;
     }
     return(0);
 }
 
+int LastRcv(tnodo *cabeza, char * user, unsigned int id){
+    //busca por un usuario y cambia el id del su último mensaje recivido
+    tnodo *actual = cabeza;
+    while(actual != NULL){ //Mientras cabeza no sea NULL
+        if (strcmp(actual->user,user) == 0){
+            actual->last_recv = id;
+            return 0;
+        }
+        actual = actual->sig; //Cabeza avanza 1 posicion en la lista
+    }
+    return 1;
+}
 
 int Conectado(tnodo *cabeza, char* destinatario){
     //esta función comprueba si remitente y destinatario están conectados a la vez. La ejecuta el remitente, por tanto, éste siempre está conectado.

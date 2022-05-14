@@ -171,6 +171,7 @@ void tratar_peticion (void *s){
                                 //obtenemos el último mensaje de la lsita de mensajes (el último el el mensaje más antiguo)
                                 obtenerUltimoMensaje(cabeza,usuario,mensaje,id_mensaje,usuario_remitente);
 
+                                //cuando el usuario destinatario está desconectado y se conecta 
                                 if(strcmp(usuario_remitente,"") == 0){
                                         //message ACK
                                         //enviamos la operación al hilo del cliente
@@ -199,6 +200,9 @@ void tratar_peticion (void *s){
                                         //enviamos el mensaje
                                         strcpy(buffer,mensaje);
                                         if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
+
+                                        //cambiamos el id del úlmtimo mensaje recibido
+                                        LastRcv(cabeza, usuario, atoi(id_mensaje));
 
                                         close(sock); //cerramos esta conexión
                                 }
@@ -367,6 +371,9 @@ void tratar_peticion (void *s){
                                 strcpy(buffer,mensaje);
                                 if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
+                                //actualizamos el último mensaje recibido
+                                LastRcv(cabeza, destinatario, atoi(id_mensaje));
+
                                 //cerramos el socket
                                 close(sock);
 
@@ -495,10 +502,7 @@ int main(int argc, char *argv[]){
 			printf("Error en accept\n");
 			return -1;
 		}
-
-                
-
-  		                     // cierra la conexión (sc)
+	                     // cierra la conexión (sc)
 	}
 	close (sd);
 

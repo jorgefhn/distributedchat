@@ -64,12 +64,12 @@ class client:
                     #recibe el mensaje    
                     mensaje = client.readResponse(connection)
 
-                    print("MESSAGE "+ id +" FROM "+ user_sender +":\n"+ mensaje +"\nEND\nc>", end=" ")
+                    print("MESSAGE "+ id +" FROM "+ user_sender +":\n"+ mensaje +"\nEND\nc> ", end="")
                 else:
                     #recibe el ack
                     #recibe el id del del mensaje
                     id = client.readResponse(connection)
-                    print("ACK OF MESSAGE "+ id +" RECEIVED\nc>", end=" ")
+                    print("ACK OF MESSAGE "+ id +" RECEIVED\nc> ", end="")
                 
         except:
             sock2.close()
@@ -81,7 +81,7 @@ class client:
         while True:
             msg = sock.recv(1)
             if (msg == b'\0'):
-                break;
+                break
             a += msg.decode()
 
         return a
@@ -93,7 +93,7 @@ class client:
         #esta la posibilidad de que el nombre sea "" asique quitamos esa posibilidad
         if user == "":
             return client.RC.ERROR2
-            
+
         sock = client.openSocket(host,port)
         
         try:
