@@ -239,11 +239,14 @@ unsigned int sendMessageEnLista(tnodo *cabeza, char * destinatario, char * remit
     tnodo *actual = cabeza;
     while(actual != NULL){ //Mientras cabeza no sea NULL
         if (strcmp(actual->user,destinatario) == 0){  
-            actual->id_counter = actual->id_counter +1;
-            if(actual->id_counter == 0){ //si se desborda
+            if (strcmp(remitente,"") != 0){ //para controlar el SEND MESSAGE ACK
                 actual->id_counter = actual->id_counter +1;
-            } 
+                if(actual->id_counter == 0){ //si se desborda
+                    actual->id_counter = actual->id_counter +1;
+                } 
 
+            }
+            
             insertarEnListaMessage(&(actual->cabeza_mensaje),remitente,mensaje,actual->id_counter);
 
             imprimirListaMessage(actual->cabeza_mensaje);

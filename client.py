@@ -65,19 +65,14 @@ class client:
                     #recibe el mensaje    
                     mensaje = client.readResponse(connection)
 
-                    print("MESSAGE "+ id +" FROM "+ user_sender +":\n"+ mensaje +"\nEND")
+                    print("MESSAGE "+ id +" FROM "+ user_sender +":\n"+ mensaje +"\nEND\nc>", end="")
                 else:
                     #recibe el ack
                     #recibe el id del del mensaje
                     id = client.readResponse(connection)
-                    print("ACK OF MESSAGE "+ id +"RECEIVED")
-            
-                print("c>", end="")
+                    print("ACK OF MESSAGE "+ id +" RECEIVED\nc>", end="")
                 
-
-
         except:
-            print("Conexión terminada")
             sock2.close()
 
     
@@ -103,7 +98,7 @@ class client:
             sock.sendall("REGISTER".encode()+b'\0')
 
             #recibimos respuesta
-            print("La operación a realizar es: ",client.readResponse(sock))
+            client.readResponse(sock)
 
             #enviamos usuario
             sock.sendall(str(user).encode()+b'\0')

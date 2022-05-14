@@ -184,36 +184,55 @@ void tratar_peticion (void *s){
                                 //obtenemos el último mensaje de la lsita de mensajes (el último el el mensaje más antiguo)
                                 obtenerUltimoMensaje(cabeza,usuario,mensaje,id_mensaje,usuario_remitente);
 
-                                if()
-                                //enviamos la operación al hilo del cliente
-                                strcpy(buffer,"SEND MESSAGE");
-                                int a = sendMessage(sock, buffer, strlen(buffer)+1);
-                                if (a == -1){
-                                        printf("Error en el send message de hola mi bro\n");
-                                }
-                                
-                                //enviamos el remitente
-                                strcpy(buffer,usuario_remitente);
-                                a = sendMessage(sock, buffer, strlen(buffer)+1);
-                                if (a == -1){
-                                        printf("Error en el send message de hola mi bro\n");
-                                }
+                                if(strcmp(usuario_remitente,"") == 0){
+                                        //message ACK
+                                        //enviamos la operación al hilo del cliente
+                                        strcpy(buffer,"SEND MESS ACK");
+                                        int a = sendMessage(sock, buffer, strlen(buffer)+1);
+                                        if (a == -1){
+                                                printf("Error en el send message de hola mi bro\n");
+                                        }
 
-                                //enviamos el id del mensaje
-                                strcpy(buffer,id_mensaje);
-                                a = sendMessage(sock, buffer, strlen(buffer)+1);
-                                if (a == -1){
-                                        printf("Error en el send message de hola mi bro\n");
-                                }
-                                
-                                //enviamos el mensaje
-                                strcpy(buffer,mensaje);
-                                a = sendMessage(sock, buffer, strlen(buffer)+1);
-                                if (a == -1){
-                                        printf("Error en el send message de hola mi bro\n");
-                                }
+                                        //enviamos el id del mensaje
+                                        strcpy(buffer,mensaje);
+                                        a = sendMessage(sock, buffer, strlen(buffer)+1);
+                                        if (a == -1){
+                                                printf("Error en el send message de hola mi bro\n");
+                                        }
 
-                                close(sock); //cerramos esta conexión
+                                        close(sock); //cerramos la conexion
+                                }
+                                else{
+                                        //enviamos la operación al hilo del cliente
+                                        strcpy(buffer,"SEND MESSAGE");
+                                        int a = sendMessage(sock, buffer, strlen(buffer)+1);
+                                        if (a == -1){
+                                                printf("Error en el send message de hola mi bro\n");
+                                        }
+                                        
+                                        //enviamos el remitente
+                                        strcpy(buffer,usuario_remitente);
+                                        a = sendMessage(sock, buffer, strlen(buffer)+1);
+                                        if (a == -1){
+                                                printf("Error en el send message de hola mi bro\n");
+                                        }
+
+                                        //enviamos el id del mensaje
+                                        strcpy(buffer,id_mensaje);
+                                        a = sendMessage(sock, buffer, strlen(buffer)+1);
+                                        if (a == -1){
+                                                printf("Error en el send message de hola mi bro\n");
+                                        }
+                                        
+                                        //enviamos el mensaje
+                                        strcpy(buffer,mensaje);
+                                        a = sendMessage(sock, buffer, strlen(buffer)+1);
+                                        if (a == -1){
+                                                printf("Error en el send message de hola mi bro\n");
+                                        }
+
+                                        close(sock); //cerramos esta conexión
+                                }
 
                                 //Una vez enviado el mensaje vamos a enviarle al remitente el ack. Para ello deberemos crear una socket que se conecte al hilo del remitente
                                 //si el remitente sigue conectado solo le notificaremos, de lo contrario almacenaremos un mensaje en su lista de mensajes
@@ -244,7 +263,7 @@ void tratar_peticion (void *s){
 
                                         //enviamos la operación al hilo del cliente
                                         strcpy(buffer,"SEND MESS ACK");
-                                        a = sendMessage(sock, buffer, strlen(buffer)+1);
+                                        int a = sendMessage(sock, buffer, strlen(buffer)+1);
                                         if (a == -1){
                                                 printf("Error en el send message de hola mi bro\n");
                                         }
@@ -501,7 +520,7 @@ int main(int argc, char *argv[]){
 	bzero((char *)&server_addr, sizeof(server_addr));
     	server_addr.sin_family      = AF_INET;
     	server_addr.sin_addr.s_addr = INADDR_ANY;
-    	server_addr.sin_port        = htons(4200);
+    	server_addr.sin_port        = htons(atoi(argv[2]));
 
     	err = bind(sd, (const struct sockaddr *)&server_addr,
 			sizeof(server_addr));
