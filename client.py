@@ -45,84 +45,27 @@ class client:
         return sock
 
   
-
-    
     @staticmethod
-    def listen_s():
+    def listen():
         global sock2
         try:
             while(1):
-
-
                 connection, client_address = sock2.accept()
-                print("connection from: ",client_address)
-                #información de cada mensaje
-                print("Mensaje recibido:")
 
-                user_sender = client.readResponse(connection)
-                s.acquire()
-                print("User sender: \n",user_sender)  
-                s.release()
-
-                id = client.readResponse(connection)
-                s.acquire()
-                print("Identificador: \n",id)  
-                s.release()
-
-                
-                mensaje = client.readResponse(connection)
-                s.acquire()
-                print("Mensaje: \n",mensaje)  
-                s.release()
-
-
-                print("-------------------------------------------------------")
-                
-
-                
-
-
-        except:
-            print("Conexión terminada")
-            sock2.close()
-
-
-    @staticmethod
-    def listen_live():
-        global sock2
-        try:
-            while(1):
-
-
-                connection, client_address = sock2.accept()
-                print("connection from: ",client_address)
-                #información de cada mensaje
-                print("Mensaje recibido:")
-
+                #recibe el la operación
                 id_operacion = client.readResponse(connection)
-                s.acquire()
-                print("Identificador de operación: \n",id_operacion)  
-                s.release()
 
+                #recibe el remitente
                 user_sender = client.readResponse(connection)
-                s.acquire()
-                print("User sender: \n",user_sender)  
-                s.release()
 
+                #recibe el id del del mensaje
                 id = client.readResponse(connection)
-                s.acquire()
-                print("Identificador: \n",id)  
-                s.release()
 
-                
+                #recibe el mensaje    
                 mensaje = client.readResponse(connection)
-                s.acquire()
-                print("Mensaje: \n",mensaje)  
-                s.release()
 
-
-                print("-------------------------------------------------------")
-                
+                print("MESSAGE "+ id_operacion +" FROM "+ user_sender +":\n"+ mensaje +"\nEND\n")
+            
 
                 
 
@@ -152,7 +95,6 @@ class client:
         try:
             #mandamos petición de registro
             sock.sendall("REGISTER".encode()+b'\0')
-            #sock.sendall(b'\0')
 
             #recibimos respuesta
             print("La operación a realizar es: ",client.readResponse(sock))
@@ -162,7 +104,6 @@ class client:
 
             r = client.readResponse(sock) #respuesta
             print("Confirmación recibida: ",r)
-
 
             print("Closing socket")
 
@@ -229,11 +170,12 @@ class client:
     @staticmethod
     def connect(user, host, port):
         global usuario_conectado, sock2, hilo
-        #Creamos el socket
 
+        #comprobamos que ningún usuario esté ya conectado 
         if usuario_conectado == user:
             return client.RC.ERROR2
 
+        #cramos el socket
         sock = client.openSocket(host,port)
         
         try:
@@ -250,14 +192,17 @@ class client:
             r = client.readResponse(sock) #respuesta
             print("Confirmación recibida ",r)
             
-            ip = str(sock.getsockname()[0])
-            
+            #si la confirmación es satisfactoria 
             if r == "0":
+                #actualizamos la variable global del usuario que está conectado
                 usuario_conectado = user
                 print("EL usuario "+user+" se ha conectado")
+
+                #creamos el nuevo socket tipo servidor que será el que utilice el hilo que escucha mensajes
                 sock2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 sock2.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            
+
+                ip = str(sock.getsockname()[0])
                 server_address = (ip, 0)
 
                 sock2.bind(server_address)
@@ -265,10 +210,7 @@ class client:
                 ip = str(sock2.getsockname()[0])
                 puerto = str(sock2.getsockname()[1])
 
-                print('voy a escuchar en  port ',server_address)
-
-                print("Puerto del socket: ",sock2.getsockname()[1])
-
+                #Vamos a enviar los datos para que el servidor actualice al usuario
                 #enviamos la ip
                 sock.sendall(ip.encode()+b'\0')
 
@@ -276,11 +218,9 @@ class client:
                 sock.sendall(puerto.encode()+b'\0')
 
                 sock2.listen(1)
-
-                hilo = threading.Thread(target=client.listen_s)
+                #creamos el hilo que va a recibir mensajes mientras el usuario siga conectado
+                hilo = threading.Thread(target=client.listen)
                 hilo.start()
-
-
 
                 return client.RC.OK
 
@@ -358,9 +298,6 @@ class client:
     @staticmethod
     def send(user, message,host,port):
         global usuario_conectado
-        global hilo2
-        id = None
-
         #usuario al que se le quiere enviar el mensaje no existe
         if usuario_conectado == "":
             return client.RC.ERROR, id
@@ -387,38 +324,10 @@ class client:
             id = client.readResponse(sock) #respuesta
             print("Confirmación recibida ",id) #aquí deberíamos tener una comprobación de si ambos están conectados. Si lo están, que se conecte al socket
 
-            if id == "SEND MESSAGE": 
-                #se tiene que conectar al socket
-                sock2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                sock2.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            
-                server_address = (ip, 0)
-
-                sock2.bind(server_address)
                 
-                ip = str(sock2.getsockname()[0])
-                puerto = str(sock2.getsockname()[1])
-
-                print('voy a escuchar en  port ',server_address)
-
-                print("Puerto del socket: ",sock2.getsockname()[1])
-
-                #enviamos la ip
-                sock.sendall(ip.encode()+b'\0')
-
-                #enviamos el puerto 
-                sock.sendall(puerto.encode()+b'\0')
-
-                sock2.listen(1)
-
-                hilo2 = threading.Thread(target=client.listen_live)
-                hilo2.start()
-
-
             print("Closing socket")
             sock.close()
 
-            #exito
             if id == "error":
                 return client.RC.ERROR, id
             else:

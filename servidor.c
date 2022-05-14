@@ -38,6 +38,7 @@ void tratar_peticion (void *s){
 
                 if (strcmp(buffer,"REGISTER") == 0){
                         /*REGISTER*/
+
                         //enviamos confirmación
                         if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
                         
@@ -49,7 +50,7 @@ void tratar_peticion (void *s){
                         //comprobar si existe
                         int existe = nodoExiste(cabeza,buffer);
 
-                        //registramos usuario
+                        //si no existe registramos usuario
                         if (existe == 0){
                                 printf("REGISTER %s OK\n",buffer);
                                 insertarEnLista(&cabeza,user);
@@ -72,6 +73,7 @@ void tratar_peticion (void *s){
                 
                 if (strcmp(buffer,"UNREGISTER") == 0){ 
                     /*UNREGISTER*/
+
                     //enviamos confirmación
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
                     
@@ -81,7 +83,7 @@ void tratar_peticion (void *s){
                     //comprobar si existe
                     int existe = nodoExiste(cabeza,buffer);
 
-                    //eliminamos usuario
+                    //eliminamos usuario si existe
                     if (existe == 1){
                         printf("UNREGISTER %s OK\n",buffer);
                         borrarPorUsuario(&cabeza,buffer);
@@ -112,7 +114,6 @@ void tratar_peticion (void *s){
                     int sd;
                     struct sockaddr_in server_addr;
                     struct hostent *hp;
-                    //struct hostent *hp;
 
                     //enviamos confirmación
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
@@ -124,9 +125,11 @@ void tratar_peticion (void *s){
                     //comprobar si existe el usuario
                     int existe = nodoExiste(cabeza,usuario);
                     
+                    //si existe
                     if (existe == 1){
                         strcpy(buffer,"0");
                     }
+                    //si no existe
                     else{
                         strcpy(buffer,"1");
                         printf("CONNECT %s FAIL\n",buffer);
@@ -136,9 +139,9 @@ void tratar_peticion (void *s){
 
                     //Cambiamos los valores del usuario si existe y si está conectado
                     if (existe == 1){
+
                         printf("CONNECT %s OK\n",usuario);
 
-                        
                         //obtenemos la ip
                         if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
                         strcpy(ip,buffer);
@@ -149,16 +152,15 @@ void tratar_peticion (void *s){
                         puerto = atoi(buffer);
                         printf("Puerto %d : \n",puerto);
                         
-                        modificarEnLista (cabeza,usuario,ip,puerto,"Conectado");
-                        
+                        //con los datos obtenidos del servidor actualizamos al usuario
+                        modificarEnLista(cabeza,usuario,ip,puerto,"Conectado");
 
-                        int n = numItemsMessage(cabeza,usuario);
-                        printf("Número de mensajes pendientes: %d\n",n);
-                        //leer la lista de mensajes pendientes
+                        //obtenemos el número de mensajes que tiene el usuario en la lista de mensajes
+                        int numero_mensajes = numItemsMessage(cabeza,usuario);
 
-
-                        for(int i=0; i<n; i++){
-
+                        //Vamos a enviar todos los mensajes que tiene el usuario que se acaba de conectar, uno por uno
+                        for(int i=0; i<numero_mensajes; i++){
+                                //para cada mensaje creamos el socket que va a enviar el mensaje al hilo del cliente correspondiente
                                 int sock = socket(AF_INET, SOCK_STREAM, 0);
 
                                 sd = socket(AF_INET, SOCK_STREAM, 0);
@@ -181,44 +183,42 @@ void tratar_peticion (void *s){
                                 if (c == -1){
                                         printf("Error en connect\n");
                                 }
+                                
+                                //obtenemos el último mensaje de la lsita de mensajes (el último el el mensaje más antiguo)
+                                obtenerUltimoMensaje(cabeza,usuario,mensaje,id_mensaje,usuario_remitente);
 
-                        
-                                int mensaje_funciona = obtenerUltimoMensaje(cabeza,usuario,mensaje,id_mensaje,usuario_remitente);
+                                printf("usuario remitente: %s\n", usuario_remitente);
 
-                                printf("Mensaje funciona: %d\n",mensaje_funciona);
-                                printf("Mensaje en el servidor: %s\n",mensaje);
-                                printf("Id del mensaje en el servidor: %s\n",id_mensaje);
-                                printf("Emisor del mensaje en el servidor: %s\n",usuario_remitente);
-
-
-                                strcpy(buffer,usuario_remitente);
-
-                                //iterar sobre la lista de mensajes cuyo destinatario es CONECTADO
+                                //enviamos la operación al hilo del cliente
+                                strcpy(buffer,"SEND MESSAGE");
                                 int a = sendMessage(sock, buffer, strlen(buffer)+1);
                                 if (a == -1){
                                         printf("Error en el send message de hola mi bro\n");
                                 }
+                                
+                                //enviamos el remitente
+                                strcpy(buffer,usuario_remitente);
+                                a = sendMessage(sock, buffer, strlen(buffer)+1);
+                                if (a == -1){
+                                        printf("Error en el send message de hola mi bro\n");
+                                }
+
+                                //enviamos el id del mensaje
                                 strcpy(buffer,id_mensaje);
-
                                 a = sendMessage(sock, buffer, strlen(buffer)+1);
                                 if (a == -1){
                                         printf("Error en el send message de hola mi bro\n");
                                 }
-
+                                
+                                //enviamos el mensaje
                                 strcpy(buffer,mensaje);
-
-
                                 a = sendMessage(sock, buffer, strlen(buffer)+1);
                                 if (a == -1){
                                         printf("Error en el send message de hola mi bro\n");
                                 }
-                                imprimirLista(cabeza);
 
-                                //send_message_ack
                                 close(sock); //cerramos esta conexión
-                        }
-
-                        
+                        }                        
                     }
                 }
 
@@ -255,21 +255,19 @@ void tratar_peticion (void *s){
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}
                 }
 
-
-                
                 if (strcmp(buffer,"SEND") == 0){                  
                     /*SEND*/
 
                     char remitente[256];
                     char destinatario[256];
                     char mensaje[256];
-                    //int id_mensaje;
+                    char id_mensaje[256];
                     char ip_destinatario[256];
                     int puerto_destinatario;
                     int sd;
                     struct sockaddr_in server_addr;
                     struct hostent *hp;
-                    //comprobamos si ambos usuarios están conectados
+
                     //enviamos confirmación
                     strcpy(buffer,"SEND");
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;} 
@@ -286,129 +284,99 @@ void tratar_peticion (void *s){
                     if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
                     strcpy(mensaje,buffer);
 
+                    //comprobar si existe el usuario que envía (es redundante ya que si llega a enviar significa que existe)
+                    int existe1 = nodoExiste(cabeza,remitente);
 
-                    int both_connected =  comprobarAmbosConectados(cabeza,remitente,destinatario);
-                    
-                    if (both_connected == 2){
-                        printf("Ambos usuarios están conectados\n");
-                        //el servidor se conecta al socket del usuario destinatario
+                    //comprobar si existe el usuario que recibe
+                    int existe2 = nodoExiste(cabeza,destinatario);
 
-                        obtenerIpYPuerto(cabeza,destinatario,ip_destinatario,&puerto_destinatario);
-                        printf("IP del destinatario: %s\n",ip_destinatario);
-                        printf("Puerto del destinatario: %d\n",puerto_destinatario);
-
-                        
-                        int sock = socket(AF_INET, SOCK_STREAM, 0);
-
-                        sd = socket(AF_INET, SOCK_STREAM, 0);
-                        if (sd == 1) {
-                                printf("Error en socket\n");
-                        }
-                        bzero((char *)&server_addr, sizeof(server_addr));
-                                
-                        hp = gethostbyname(ip_destinatario); //en ip hay un string con la ip del cliente
-                        if (hp == NULL) {
-                                printf("Error en gethostbyname\n");
-                        }
-                                
-                        memcpy (&(server_addr.sin_addr), hp->h_addr, hp->h_length);
-
-                        server_addr.sin_family = AF_INET;
-                        server_addr.sin_port = htons(puerto_destinatario);
-
-                        //se conecta al socket del cliente destinatario
-                        int c = connect(sock, (struct sockaddr *) &server_addr,  sizeof(server_addr));
-                        if (c == -1){
-                                printf("Error en connect\n");
-                        }
-
-                        strcpy(buffer,"SEND MESSAGE");
-                        int a = sendMessage(sock, buffer, strlen(buffer)+1);
-                        if (a == -1){
-                                printf("Error en el send message de hola mi bro\n");
-                        }
-
-                        strcpy(buffer,remitente);
-                        a = sendMessage(sock, buffer, strlen(buffer)+1);
-                        if (a == -1){
-                                printf("Error en el send message de hola mi bro\n");
-                        }
-
-
-                        
-                        strcpy(buffer,"0");
-
-                        a = sendMessage(sock, buffer, strlen(buffer)+1);
-                        if (a == -1){
-                                printf("Error en el send message de hola mi bro\n");
-                        }
-                        
-
-                        strcpy(buffer,mensaje);
-
-                        a = sendMessage(sock, buffer, strlen(buffer)+1);
-                        if (a == -1){
-                                printf("Error en el send message de hola mi bro\n");
-                        }
-
-                        /*
-                        
-
-                        printf("Mensaje funciona: %d\n",mensaje_funciona);
-                        printf("Mensaje en el servidor: %s\n",mensaje);
-                        printf("Id del mensaje en el servidor: %s\n",id_mensaje);
-                        printf("Emisor del mensaje en el servidor: %s\n",usuario_remitente);
-
-
-                        strcpy(buffer,usuario_remitente);
-
-                        //iterar sobre la lista de mensajes cuyo destinatario es CONECTADO
-                        int a = sendMessage(sock, buffer, strlen(buffer)+1);
-                        if (a == -1){
-                                printf("Error en el send message de hola mi bro\n");
-                        }
-                        strcpy(buffer,id_mensaje);
-
-                        a = sendMessage(sock, buffer, strlen(buffer)+1);
-                        if (a == -1){
-                                printf("Error en el send message de hola mi bro\n");
-                        }
-
-                        strcpy(buffer,mensaje);
-
-
-                        a = sendMessage(sock, buffer, strlen(buffer)+1);
-                        if (a == -1){
-                                printf("Error en el send message de hola mi bro\n");
-                        }
-                        imprimirLista(cabeza);
-
-                        */
-                        
-                    }
-
-                    if (both_connected == 1){
-                        printf("Solo el emisor está conectado\n");
-                    
-                    //comprobar si existe el usuario
-                    int existe = nodoExiste(cabeza,destinatario);
-
-                    //Metemos el mensaje al la lista del usuario si existe
-                    if (existe == 1){
-                        sendMessageEnLista(cabeza,destinatario,remitente,mensaje);
-                        strcpy(buffer,"0");
-                    } 
-
-                    if (existe == 0){ //no existe el usuario
+                    if(existe1 == 0 && existe2 == 0){
                         strcpy(buffer,"error");
                     }
-
+                    else{
+                            strcpy(buffer,"0");
                     }
-
+                    
                     //enviamos confirmación
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}
+                    
+                    if (existe1 == 1 && existe2 == 1){
+                        //metemos el mesaje en la lista de mensajes del destinatario y sacamos el id del mensaje
+                        unsigned int id = sendMessageEnLista(cabeza,destinatario,remitente,mensaje);
+                        
+                        //comprobamos que el destinatario esté conectado para saber si enviarle el mensaje
+                        int conectado = Conectado(cabeza, destinatario);
 
+                        if (conectado == 1){
+                                //obtenemos la ip y el puerto del destinatario para crear el socket y enviarle el mensaje
+                                obtenerIpYPuerto(cabeza,destinatario,ip_destinatario,&puerto_destinatario);
 
+                                //creamos el socket        
+                                int sock = socket(AF_INET, SOCK_STREAM, 0);
+
+                                sd = socket(AF_INET, SOCK_STREAM, 0);
+                                if (sd == 1) {
+                                        printf("Error en socket\n");
+                                }
+                                bzero((char *)&server_addr, sizeof(server_addr));
+                                        
+                                hp = gethostbyname(ip_destinatario); //en ip hay un string con la ip del cliente
+                                if (hp == NULL) {
+                                        printf("Error en gethostbyname\n");
+                                }
+                                        
+                                memcpy (&(server_addr.sin_addr), hp->h_addr, hp->h_length);
+
+                                server_addr.sin_family = AF_INET;
+                                server_addr.sin_port = htons(puerto_destinatario);
+
+                                //se conecta al socket del hilo del destinatario
+                                int c = connect(sock, (struct sockaddr *) &server_addr,  sizeof(server_addr));
+                                if (c == -1){
+                                        printf("Error en connect\n");
+                                }
+
+                                //obtenemos los datos que acabamos de meter en la lista del destinatario
+                                obtenerUltimoMensaje(cabeza,destinatario,mensaje,id_mensaje,remitente);
+
+                                //enviamos la operación al hilo del cliente
+                                strcpy(buffer,"SEND MESSAGE");
+                                int a = sendMessage(sock, buffer, strlen(buffer)+1);
+                                if (a == -1){
+                                        printf("Error en el send message de hola mi bro\n");
+                                }
+
+                                //enviamos el remitente
+                                strcpy(buffer,remitente);
+                                a = sendMessage(sock, buffer, strlen(buffer)+1);
+                                if (a == -1){
+                                        printf("Error en el send message de hola mi bro\n");
+                                }
+
+                                //enviamos el id del mensaje
+                                strcpy(buffer,id_mensaje);
+                                a = sendMessage(sock, buffer, strlen(buffer)+1);
+                                if (a == -1){
+                                        printf("Error en el send message de hola mi bro\n");
+                                }
+                                
+                                
+                                //enviamos el mensaje
+                                strcpy(buffer,mensaje);
+                                a = sendMessage(sock, buffer, strlen(buffer)+1);
+                                if (a == -1){
+                                        printf("Error en el send message de hola mi bro\n");
+                                }
+
+                                //cerramos el socket
+                                close(sock);
+
+                                printf("SEND MESSAGE %s FROM %s TO %s", id_mensaje, remitente, destinatario);
+                        }
+                        else{
+                                printf("MESSAGE %d FROM %s TO %s STORED", id, remitente, destinatario);
+                        }
+                    }
                 }
                 if (strcmp(buffer,"EXIT") == 0){
                         break;

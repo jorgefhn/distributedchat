@@ -16,6 +16,7 @@ typedef struct snodo{ //snodo es el nombre de la estructura
     char estado[256];
     char ip[256];
     int puerto;
+    unsigned int id_counter;
     unsigned int last_recv;
     struct mensaje *cabeza_mensaje;
 

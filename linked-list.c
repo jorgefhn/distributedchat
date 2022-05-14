@@ -40,6 +40,7 @@ int insertarEnLista(tpuntero *cabeza, char* user){
     nuevo->puerto = 0;
     strcpy(nuevo->estado,"Desconectado");
     
+    nuevo->id_counter = 0; //el contador es 0
     nuevo->last_recv = 0; //por defecto, último mensaje recibido
     nuevo->cabeza_mensaje = NULL; //por defecto
     nuevo->sig = *cabeza; //Le asignamos al siguiente el valor de cabeza
@@ -142,21 +143,17 @@ int numItems(tnodo *cabeza){
 
 int numItemsMessage(tnodo *cabeza,char* usuario){
     tnodo *actual = cabeza;
-    printf("Entra en el num items\n");
     while(actual != NULL){ //Mientras cabeza no sea NULL
         if (strcmp(actual->user,usuario) == 0){
             //ha encontrado al usuario
-            printf("Lo encuentra\n");
             tmensaje *msg_actual = actual->cabeza_mensaje;
-            
-
+        
             int counter = 0;
             while(msg_actual != NULL){ //Mientras cabeza no sea NULL
                 counter++;
                 msg_actual = msg_actual -> sig;
             }
-            printf("Lo encuentra\n");
-
+            
             return(counter);         
         }
         actual = actual->sig;
@@ -174,7 +171,6 @@ int obtenerUltimoMensaje(tnodo *cabeza,char* usuario,char* mensaje_param,char* i
         if (strcmp(actual->user,usuario) == 0){
             
             if (actual->cabeza_mensaje != NULL){ //hay algun mensaje
-                printf("último mensaje\n");
                 tmensaje *msg_actual = actual->cabeza_mensaje;
                 tmensaje *aux = actual->cabeza_mensaje;
                 while (msg_actual->sig != NULL){
@@ -189,7 +185,7 @@ int obtenerUltimoMensaje(tnodo *cabeza,char* usuario,char* mensaje_param,char* i
                 //toma el último mensjae
                 strcpy(mensaje_param,msg_actual->message);
                 sprintf(id_mensaje,"%d",msg_actual->id);
-                strcpy(usuario,msg_actual->user_sender);
+                strcpy(usuario_remitente,msg_actual->user_sender);
                 
                 
                 if (actual->cabeza_mensaje->sig == NULL){
@@ -238,35 +234,25 @@ int insertarEnListaMessage(tpuntero_mensaje *cabeza, char* remitente, char* mens
     return 0;
 }
 
-int sendMessageEnLista(tnodo *cabeza, char * destinatario, char * remitente, char * mensaje){
+unsigned int sendMessageEnLista(tnodo *cabeza, char * destinatario, char * remitente, char * mensaje){
     //busca por un usuario y lo modifica
     tnodo *actual = cabeza;
     while(actual != NULL){ //Mientras cabeza no sea NULL
         if (strcmp(actual->user,destinatario) == 0){  
-            actual->last_recv = actual->last_recv +1;
-            if(actual->last_recv == 0){ //si se desborda
-                actual->last_recv = actual->last_recv +1;
+            actual->id_counter = actual->id_counter +1;
+            if(actual->id_counter == 0){ //si se desborda
+                actual->id_counter = actual->id_counter +1;
             } 
-            insertarEnListaMessage(&(actual->cabeza_mensaje),remitente,mensaje,actual->last_recv);
+
+            insertarEnListaMessage(&(actual->cabeza_mensaje),remitente,mensaje,actual->id_counter);
 
             imprimirListaMessage(actual->cabeza_mensaje);
-            if(strcmp(actual->estado,"Conectado") == 0){
-                printf("SEND MESSAGE %d FROM %s TO %s\n", actual->last_recv, remitente, destinatario);
-            }
-            else{
-                printf("MESSAGE %d FROM %s TO %s STORED\n", actual->last_recv, remitente, destinatario);
-            }
-            break;
-            
 
+            return actual->id_counter;
         }
         actual = actual->sig; //Cabeza avanza 1 posicion en la lista
     }
-
-    if (actual == NULL){
-        return -1; //código de operacion 8: no encontrado
-    }
-    return(0);
+    return 0; //código de operacion 8: no encontrado
 }
 
 int modificarEnLista (tnodo *cabeza, char * user, char * ip, int port, char * estado){
@@ -290,32 +276,24 @@ int modificarEnLista (tnodo *cabeza, char * user, char * ip, int port, char * es
 }
 
 
-int comprobarAmbosConectados(tnodo *cabeza,char* remitente,char* destinatario){
+int Conectado(tnodo *cabeza, char* destinatario){
     //esta función comprueba si remitente y destinatario están conectados a la vez. La ejecuta el remitente, por tanto, éste siempre está conectado.
     // Devuelve 2 si ambos están conectados, 1 si está solo el remitente y 0 en otro caso.
     tnodo *actual = cabeza;
-    int counter = 0;
 
     while(actual != NULL){ //Mientras cabeza no sea NULL
-
-        if (strcmp(actual->user,remitente) == 0){
-            if ((strcmp(actual->ip,"0") != 0) && (actual->puerto != 0)){
-                //ip y puerto != 0 (remitente conectado)
-                counter++;
-            }
-        }
-
         if (strcmp(actual->user,destinatario) == 0){
-            if ( (strcmp(actual->ip,"0") != 0) && (actual->puerto != 0)){
+            if (strcmp(actual->estado,"Conectado") == 0){
                 //ip y puerto != 0 (destinatario conectado)
-                counter++;
+                return 1;
+            }
+            else{
+                return 0;
             }
         }
         actual = actual -> sig;
-
     }
-
-    return(counter); //no existe           
+    return 0; //no existe           
 
 }
 
