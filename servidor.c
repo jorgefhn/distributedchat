@@ -217,6 +217,9 @@ void tratar_peticion (void *s){
                                 close(sock); //cerramos esta conexión
 
                                 //Una vez enviado el mensaje vamos a enviarle al remitente el ack. Para ello deberemos crear una socket que se conecte al hilo del remitente
+                                //si el remitente sigue conectado solo le notificaremos, de lo contrario almacenaremos un mensaje en su lista de mensajes
+                                int conectado = Conectado(cabeza, usuario_remitente);
+                                if (conectado == 1){
                                 //Sacamos la ip y el puerto del remitente
                                 obtenerIpYPuerto(cabeza,usuario_remitente,ip_remitente,&puerto_remitente);
 
@@ -411,7 +414,8 @@ void tratar_peticion (void *s){
 
                                 printf("SEND MESSAGE %s FROM %s TO %s", id_mensaje, remitente, destinatario);
 
-                                //Una vez enviado el mensaje vamos a enviarle al remitente el ack. Para ello deberemos crear una socket que se conecte al hilo del remitente
+                                //Una vez enviado el mensaje vamos a enviarle al remitente el ack. Para ello le enviaremos un mensaje al remitente 
+                                //En este caso el remitente está ya conectado por lo que no vamos a meter el mensaje dentro de la lista de mensajes, solo le notificaremos 
                                 //Sacamos la ip y el puerto del remitente
                                 obtenerIpYPuerto(cabeza,remitente,ip_remitente,&puerto_remitente);
 
