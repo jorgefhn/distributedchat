@@ -40,7 +40,6 @@ class client:
     def openSocket(host,port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_address = (host,int(port))
-        print('connecting to {} port {}'.format(*server_address))
         sock.connect(server_address)
         return sock
 
@@ -97,16 +96,10 @@ class client:
             #mandamos petición de registro
             sock.sendall("REGISTER".encode()+b'\0')
 
-            #recibimos respuesta
-            client.readResponse(sock)
-
             #enviamos usuario
             sock.sendall(str(user).encode()+b'\0')
 
             r = client.readResponse(sock) #respuesta
-            print("Confirmación recibida: ",r)
-
-            print("Closing socket")
 
             sock.close()
 
@@ -117,7 +110,6 @@ class client:
                 return client.RC.ERROR1
 
         except:
-            print("User error socket")
             sock.close()
             return client.RC.ERROR2
 
@@ -136,18 +128,11 @@ class client:
             #mandamos petición de registro
             sock.sendall("UNREGISTER".encode()+b'\0')
 
-            #recibimos respuesta
-            print("La operación a realizar es: ",client.readResponse(sock))
-
             #enviamos usuario
             sock.sendall(str(user).encode()+b'\0')
-    
-            print("Aquí ya envia el usuario")
 
             r = client.readResponse(sock) #respuesta
-            print("Confirmación recibida ",r)
 
-            print("Closing socket")
             sock.close()
 
             if r == "0":
@@ -157,7 +142,6 @@ class client:
                 return client.RC.ERROR1
 
         except:
-            print("User error socket")
             sock.close()
             return client.RC.ERROR2
 
@@ -183,21 +167,16 @@ class client:
             #enviamos solicitud de conexión
             sock.sendall("CONNECT".encode()+b'\0')
             
-            #recibimos confirmación de la operación
-            print("La operación a realizar es: ",client.readResponse(sock))
-            
             #enviamos el usuario 
             sock.sendall(str(user).encode()+b'\0')
 
             #Recibimos la confirmación
             r = client.readResponse(sock) #respuesta
-            print("Confirmación recibida ",r)
             
             #si la confirmación es satisfactoria 
             if r == "0":
                 #actualizamos la variable global del usuario que está conectado
                 usuario_conectado = user
-                print("EL usuario "+user+" se ha conectado")
 
                 #creamos el nuevo socket tipo servidor que será el que utilice el hilo que escucha mensajes
                 sock2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -228,11 +207,9 @@ class client:
             if r == "1":
                 return client.RC.ERROR1
 
-            print("Closing socket del servidor")
             sock.close()
         
         except:
-            print("User error socket")
             sock.close()
             return client.RC.ERROR3
     # *
@@ -254,27 +231,18 @@ class client:
             #enviamos solicitud de conexión
             sock.sendall("DISCONNECT".encode()+b'\0')
             
-            #recibimos confirmación de la operación
-            print("La operación a realizar es:",client.readResponse(sock))
-
             #enviamos el usuario 
             sock.sendall(str(user).encode()+b'\0')
 
             #Recibimos la confirmación
             r = client.readResponse(sock) #respuesta
-            print("Confirmación recibida ",r)
 
-            print("Closing socket")
+
             sock.close()
 
-            print("Sock 2 puerto:" ,sock2.getsockname()[1])
-            print("el shutdown", sock2.shutdown(socket.SHUT_RDWR))
+            sock2.shutdown(socket.SHUT_RDWR)
            
-
             hilo.join()
-            
-            print("Después del hilo")
-            
             
             #Devolvemos el resultado
             if r == "0":
@@ -285,7 +253,6 @@ class client:
                 return client.RC.ERROR1
 
         except:
-            print("User error socket")
             sock.close()
             return client.RC.ERROR3
 
@@ -309,9 +276,6 @@ class client:
             #enviamos solicitud de conexión
             sock.sendall("SEND".encode()+b'\0')
 
-            #recibimos confirmación de la operación
-            print("La operacion a realizar es:",client.readResponse(sock))
-
             #enviamos el usuario que envía el mensaje
             sock.sendall(str(usuario_conectado).encode()+b'\0')
 
@@ -321,12 +285,9 @@ class client:
             #enviamos el mensaje 
             sock.sendall(str(message).encode()+b'\0')
 
-            #Recibimos la confirmación que en este caso es el id asociado al mensaje o error si no existe
+            #Recibimos la confirmación
             id = client.readResponse(sock) #respuesta
-            print("Confirmación recibida ",id) #aquí deberíamos tener una comprobación de si ambos están conectados. Si lo están, que se conecte al socket
-
-                
-            print("Closing socket")
+ 
             sock.close()
 
             if id == "error":
@@ -336,7 +297,6 @@ class client:
 
         except:
             #error
-            print("User error socket")
             sock.close()
             return client.RC.ERROR2, id
 
@@ -371,7 +331,6 @@ class client:
                     if (line[0]=="REGISTER") :
                         if (len(line) == 2) :
                             var = client.register(line[1],host,port).value
-                            print("Var: ",var)
                             if var == 0: #ok
                                 print("REGISTER OK")
                             if (var) == 1: #usuario en uso
@@ -384,7 +343,6 @@ class client:
                     elif(line[0]=="UNREGISTER") :
                         if (len(line) == 2) :
                             var = client.unregister(line[1],host,port).value
-                            print("Var: ",var)
                             if var == 0: #ok
                                 print("UNREGISTER OK")
                             if (var) == 1: #usuario no existe

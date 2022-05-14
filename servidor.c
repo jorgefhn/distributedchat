@@ -32,18 +32,15 @@ void tratar_peticion (void *s){
 
                 int n = readLine(sc, buffer, 256); 
                 if (n==-1){
-                        printf("Error en el servidor de arriba\n");
+                        printf("Error\n");
                         break; 
                 }
 
                 if (strcmp(buffer,"REGISTER") == 0){
                         /*REGISTER*/
 
-                        //enviamos confirmación
-                        if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
-                        
                         //obtenemos usuario
-                        if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
+                        if ((readLine(sc, buffer, 256)==-1)){printf("Error\n");break;}
 
                         strcpy(user,buffer);
 
@@ -67,18 +64,15 @@ void tratar_peticion (void *s){
                         imprimirLista(cabeza);//opcional
 
                         //enviamos el resultado
-                        if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}
+                        if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
                 
                 }
                 
                 if (strcmp(buffer,"UNREGISTER") == 0){ 
-                    /*UNREGISTER*/
-
-                    //enviamos confirmación
-                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
+                    /*UNREGISTER*/  
                     
                     //obtenemos usuario
-                    if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
+                    if ((readLine(sc, buffer, 256)==-1)){printf("Error\n");break;}
                     
                     //comprobar si existe
                     int existe = nodoExiste(cabeza,buffer);
@@ -99,7 +93,7 @@ void tratar_peticion (void *s){
                     }
 
                     //enviamos el resultado
-                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}
+                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
                 }
 
                 if (strcmp(buffer,"CONNECT") == 0){                
@@ -116,12 +110,10 @@ void tratar_peticion (void *s){
                     int sd;
                     struct sockaddr_in server_addr;
                     struct hostent *hp;
-
-                    //enviamos confirmación
-                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
+  
                     
                     //obtenemos usuario
-                    if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
+                    if ((readLine(sc, buffer, 256)==-1)){printf("Error\n");break;}
                     strcpy(usuario,buffer);
 
                     //comprobar si existe el usuario
@@ -137,7 +129,7 @@ void tratar_peticion (void *s){
                         printf("CONNECT %s FAIL\n",buffer);
                     }
                     //enviamos confirmación
-                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}
+                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                     //Cambiamos los valores del usuario si existe y si está conectado
                     if (existe == 1){
@@ -145,12 +137,12 @@ void tratar_peticion (void *s){
                         printf("CONNECT %s OK\n",usuario);
 
                         //obtenemos la ip
-                        if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
+                        if ((readLine(sc, buffer, 256)==-1)){printf("Error\n");break;}
                         strcpy(ip,buffer);
                         printf("IP %s : \n",ip);
 
                         //obtenemos el puerto
-                        if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
+                        if ((readLine(sc, buffer, 256)==-1)){printf("Error\n");break;}
                         puerto = atoi(buffer);
                         printf("Puerto %d : \n",puerto);
                         
@@ -171,14 +163,14 @@ void tratar_peticion (void *s){
                                 bzero((char *)&server_addr, sizeof(server_addr));
                                 hp = gethostbyname(ip); //en ip hay un string con la ip del cliente
                                 if (hp == NULL) {
-                                        printf("Error en gethostbyname\n");
+                                        printf("Error en socket\n");
                                 }
                                 memcpy (&(server_addr.sin_addr), hp->h_addr, hp->h_length);
                                 server_addr.sin_family = AF_INET;
                                 server_addr.sin_port = htons(puerto);
                                 int c = connect(sock, (struct sockaddr *) &server_addr,  sizeof(server_addr));
                                 if (c == -1){
-                                        printf("Error en connect\n");
+                                        printf("Error en socket\n");
                                 }
                                 
                                 //obtenemos el último mensaje de la lsita de mensajes (el último el el mensaje más antiguo)
@@ -188,48 +180,29 @@ void tratar_peticion (void *s){
                                         //message ACK
                                         //enviamos la operación al hilo del cliente
                                         strcpy(buffer,"SEND MESS ACK");
-                                        int a = sendMessage(sock, buffer, strlen(buffer)+1);
-                                        if (a == -1){
-                                                printf("Error en el send message de hola mi bro\n");
-                                        }
+                                        if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                         //enviamos el id del mensaje
                                         strcpy(buffer,mensaje);
-                                        a = sendMessage(sock, buffer, strlen(buffer)+1);
-                                        if (a == -1){
-                                                printf("Error en el send message de hola mi bro\n");
-                                        }
+                                        if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                         close(sock); //cerramos la conexion
                                 }
                                 else{
                                         //enviamos la operación al hilo del cliente
                                         strcpy(buffer,"SEND MESSAGE");
-                                        int a = sendMessage(sock, buffer, strlen(buffer)+1);
-                                        if (a == -1){
-                                                printf("Error en el send message de hola mi bro\n");
-                                        }
+                                        if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
                                         
                                         //enviamos el remitente
                                         strcpy(buffer,usuario_remitente);
-                                        a = sendMessage(sock, buffer, strlen(buffer)+1);
-                                        if (a == -1){
-                                                printf("Error en el send message de hola mi bro\n");
-                                        }
+                                        if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                         //enviamos el id del mensaje
                                         strcpy(buffer,id_mensaje);
-                                        a = sendMessage(sock, buffer, strlen(buffer)+1);
-                                        if (a == -1){
-                                                printf("Error en el send message de hola mi bro\n");
-                                        }
+                                        if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
                                         
                                         //enviamos el mensaje
-                                        strcpy(buffer,mensaje);
-                                        a = sendMessage(sock, buffer, strlen(buffer)+1);
-                                        if (a == -1){
-                                                printf("Error en el send message de hola mi bro\n");
-                                        }
+                                        if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                         close(sock); //cerramos esta conexión
                                 }
@@ -251,29 +224,23 @@ void tratar_peticion (void *s){
                                         bzero((char *)&server_addr, sizeof(server_addr));
                                         hp = gethostbyname(ip_remitente); //en ip hay un string con la ip del cliente
                                         if (hp == NULL) {
-                                                printf("Error en gethostbyname\n");
+                                                printf("Error en socket\n");
                                         }
                                         memcpy (&(server_addr.sin_addr), hp->h_addr, hp->h_length);
                                         server_addr.sin_family = AF_INET;
                                         server_addr.sin_port = htons(puerto_remitente);
                                         c = connect(sock, (struct sockaddr *) &server_addr,  sizeof(server_addr));
                                         if (c == -1){
-                                                printf("Error en connect\n");
+                                                printf("Error en socket\n");
                                         }
 
                                         //enviamos la operación al hilo del cliente
                                         strcpy(buffer,"SEND MESS ACK");
-                                        int a = sendMessage(sock, buffer, strlen(buffer)+1);
-                                        if (a == -1){
-                                                printf("Error en el send message de hola mi bro\n");
-                                        }
+                                        if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                         //enviamos el id del mensaje
                                         strcpy(buffer,id_mensaje);
-                                        a = sendMessage(sock, buffer, strlen(buffer)+1);
-                                        if (a == -1){
-                                                printf("Error en el send message de hola mi bro\n");
-                                        }
+                                        if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                         close(sock); //cerramos la conexion
                                 }
@@ -290,12 +257,9 @@ void tratar_peticion (void *s){
                     /*DISCONNECT*/
 
                     char usuario[256];
-                    
-                    //enviamos confirmación
-                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}  
-                    
+                     
                     //obtenemos usuario
-                    if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
+                    if ((readLine(sc, buffer, 256)==-1)){printf("Error");break;}
                     strcpy(usuario,buffer);
 
                     //comprobar si existe el usuario
@@ -334,20 +298,16 @@ void tratar_peticion (void *s){
                     struct sockaddr_in server_addr;
                     struct hostent *hp;
 
-                    //enviamos confirmación
-                    strcpy(buffer,"SEND");
-                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;} 
-
                     //obtenemos usuario que envía
-                    if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
+                    if ((readLine(sc, buffer, 256)==-1)){printf("Error\n");break;}
                     strcpy(remitente,buffer);
 
                     //obtenemos el usuario destinatario
-                    if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
+                    if ((readLine(sc, buffer, 256)==-1)){printf("Error\n");break;}
                     strcpy(destinatario,buffer);
 
                     //obtenemos el mensaje
-                    if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
+                    if ((readLine(sc, buffer, 256)==-1)){printf("Error\n");break;}
                     strcpy(mensaje,buffer);
 
                     //comprobar si existe el usuario que envía (es redundante ya que si llega a enviar significa que existe)
@@ -364,7 +324,7 @@ void tratar_peticion (void *s){
                     }
                     
                     //enviamos confirmación
-                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}
+                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
                     
                     if (existe1 == 1 && existe2 == 1){
                         //metemos el mesaje en la lista de mensajes del destinatario y sacamos el id del mensaje
@@ -388,7 +348,7 @@ void tratar_peticion (void *s){
                                         
                                 hp = gethostbyname(ip_destinatario); //en ip hay un string con la ip del cliente
                                 if (hp == NULL) {
-                                        printf("Error en gethostbyname\n");
+                                        printf("Error en socket\n");
                                 }
                                         
                                 memcpy (&(server_addr.sin_addr), hp->h_addr, hp->h_length);
@@ -399,7 +359,7 @@ void tratar_peticion (void *s){
                                 //se conecta al socket del hilo del destinatario
                                 int c = connect(sock, (struct sockaddr *) &server_addr,  sizeof(server_addr));
                                 if (c == -1){
-                                        printf("Error en connect\n");
+                                        printf("Error en socket\n");
                                 }
 
                                 //obtenemos los datos que acabamos de meter en la lista del destinatario
@@ -407,32 +367,20 @@ void tratar_peticion (void *s){
 
                                 //enviamos la operación al hilo del cliente
                                 strcpy(buffer,"SEND MESSAGE");
-                                int a = sendMessage(sock, buffer, strlen(buffer)+1);
-                                if (a == -1){
-                                        printf("Error en el send message de hola mi bro\n");
-                                }
+                                if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                 //enviamos el remitente
                                 strcpy(buffer,remitente);
-                                a = sendMessage(sock, buffer, strlen(buffer)+1);
-                                if (a == -1){
-                                        printf("Error en el send message de hola mi bro\n");
-                                }
+                                if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                 //enviamos el id del mensaje
                                 strcpy(buffer,id_mensaje);
-                                a = sendMessage(sock, buffer, strlen(buffer)+1);
-                                if (a == -1){
-                                        printf("Error en el send message de hola mi bro\n");
-                                }
+                                if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
                                 
                                 
                                 //enviamos el mensaje
                                 strcpy(buffer,mensaje);
-                                a = sendMessage(sock, buffer, strlen(buffer)+1);
-                                if (a == -1){
-                                        printf("Error en el send message de hola mi bro\n");
-                                }
+                                if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                 //cerramos el socket
                                 close(sock);
@@ -465,17 +413,11 @@ void tratar_peticion (void *s){
 
                                 //enviamos la operación al hilo del cliente
                                 strcpy(buffer,"SEND MESS ACK");
-                                a = sendMessage(sock, buffer, strlen(buffer)+1);
-                                if (a == -1){
-                                        printf("Error en el send message de hola mi bro\n");
-                                }
+                                if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                 //enviamos el id del mensaje
                                 strcpy(buffer,id_mensaje);
-                                a = sendMessage(sock, buffer, strlen(buffer)+1);
-                                if (a == -1){
-                                        printf("Error en el send message de hola mi bro\n");
-                                }
+                                if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                 close(sock); //cerramos la conexion
                         }
