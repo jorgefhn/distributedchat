@@ -49,14 +49,14 @@ void tratar_peticion (void *s){
 
                         //si no existe registramos usuario
                         if (existe == 0){
-                                printf("REGISTER %s OK\n",buffer);
+                                printf("s> REGISTER %s OK\n",buffer);
                                 insertarEnLista(&cabeza,user);
                                 strcpy(buffer,"0");
 
                         }
 
                         if (existe == 1){ //ya existe el usuario. 
-                                printf("REGISTER %s FAIL\n",buffer);
+                                printf("s> REGISTER %s FAIL\n",buffer);
 
                                 strcpy(buffer,"1");
                         }
@@ -77,14 +77,14 @@ void tratar_peticion (void *s){
 
                     //eliminamos usuario si existe
                     if (existe == 1){
-                        printf("UNREGISTER %s OK\n",buffer);
+                        printf("s> UNREGISTER %s OK\n",buffer);
                         borrarPorUsuario(&cabeza,buffer);
                         strcpy(buffer,"0");
 
                     }
 
                     if (existe == 0){ //no existe el usuario 
-                        printf("UNREGISTER %s FAIL\n",buffer);
+                        printf("s> UNREGISTER %s FAIL\n",buffer);
 
                         strcpy(buffer,"1");
                     }
@@ -123,7 +123,7 @@ void tratar_peticion (void *s){
                     //si no existe
                     else{
                         strcpy(buffer,"1");
-                        printf("CONNECT %s FAIL\n",buffer);
+                        printf("s> CONNECT %s FAIL\n",buffer);
                     }
                     //enviamos confirmación
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
@@ -131,7 +131,7 @@ void tratar_peticion (void *s){
                     //Cambiamos los valores del usuario si existe y si está conectado
                     if (existe == 1){
 
-                        printf("CONNECT %s OK\n",usuario);
+                        printf("s> CONNECT %s OK\n",usuario);
 
                         //obtenemos la ip
                         if ((readLine(sc, buffer, 256)==-1)){printf("Error\n");break;}
@@ -267,13 +267,13 @@ void tratar_peticion (void *s){
 
                     //Cambiamos los valores del usuario si existe y si está conectado
                     if (existe == 1){
-                        printf("DISCONNECT %s OK\n",usuario);
+                        printf("s> DISCONNECT %s OK\n",usuario);
                         modificarEnLista (cabeza,usuario,"",0,"Desconectado");
                         strcpy(buffer,"0");
                     }
 
                     if (existe == 0){ //no existe el usuario
-                        printf("DISCONNECT %s FAIL\n",buffer);
+                        printf("s> DISCONNECT %s FAIL\n",buffer);
 
                         strcpy(buffer,"1");
                     }
@@ -377,7 +377,7 @@ void tratar_peticion (void *s){
                                 //cerramos el socket
                                 close(sock);
 
-                                printf("SEND MESSAGE %s FROM %s TO %s\n", id_mensaje, remitente, destinatario);
+                                printf("s> SEND MESSAGE %s FROM %s TO %s\n", id_mensaje, remitente, destinatario);
 
                                 //Una vez enviado el mensaje vamos a enviarle al remitente el ack. Para ello le enviaremos un mensaje al remitente 
                                 //En este caso el remitente está ya conectado por lo que no vamos a meter el mensaje dentro de la lista de mensajes, solo le notificaremos 
@@ -414,7 +414,7 @@ void tratar_peticion (void *s){
                                 close(sock); //cerramos la conexion
                         }
                         else{
-                                printf("MESSAGE %d FROM %s TO %s STORED\n", id, remitente, destinatario);
+                                printf("s> MESSAGE %d FROM %s TO %s STORED\n", id, remitente, destinatario);
                         }
                     
                         strcpy(buffer,"0");
@@ -458,7 +458,7 @@ int main(int argc, char *argv[]){
         //char buffer[256];
 
         if ((sd =  socket(AF_INET, SOCK_STREAM, 0))<0){
-                printf ("SERVER: Error en el socket");
+                printf("error en socket\n");
                 return (0);
         }
         val = 1;
