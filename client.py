@@ -9,6 +9,8 @@ from threading import Semaphore
 usuario_conectado = ""
 sock2 = None
 hilo = None
+hilo2 = None
+
 s = Semaphore()
 class client:
 
@@ -44,6 +46,7 @@ class client:
 
   
 
+    
     @staticmethod
     def listen_s():
         global sock2
@@ -55,6 +58,51 @@ class client:
                 print("connection from: ",client_address)
                 #información de cada mensaje
                 print("Mensaje recibido:")
+
+                user_sender = client.readResponse(connection)
+                s.acquire()
+                print("User sender: \n",user_sender)  
+                s.release()
+
+                id = client.readResponse(connection)
+                s.acquire()
+                print("Identificador: \n",id)  
+                s.release()
+
+                
+                mensaje = client.readResponse(connection)
+                s.acquire()
+                print("Mensaje: \n",mensaje)  
+                s.release()
+
+
+                print("-------------------------------------------------------")
+                
+
+                
+
+
+        except:
+            print("Conexión terminada")
+            sock2.close()
+
+
+    @staticmethod
+    def listen_live():
+        global sock2
+        try:
+            while(1):
+
+
+                connection, client_address = sock2.accept()
+                print("connection from: ",client_address)
+                #información de cada mensaje
+                print("Mensaje recibido:")
+
+                id_operacion = client.readResponse(connection)
+                s.acquire()
+                print("Identificador de operación: \n",id_operacion)  
+                s.release()
 
                 user_sender = client.readResponse(connection)
                 s.acquire()
@@ -310,7 +358,7 @@ class client:
     @staticmethod
     def send(user, message,host,port):
         global usuario_conectado
-        global hilo
+        global hilo2
         id = None
 
         #usuario al que se le quiere enviar el mensaje no existe
@@ -363,8 +411,8 @@ class client:
 
                 sock2.listen(1)
 
-                hilo = threading.Thread(target=client.listen_s)
-                hilo.start()
+                hilo2 = threading.Thread(target=client.listen_live)
+                hilo2.start()
 
 
             print("Closing socket")

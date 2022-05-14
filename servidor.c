@@ -263,6 +263,7 @@ void tratar_peticion (void *s){
                     char remitente[256];
                     char destinatario[256];
                     char mensaje[256];
+                    //int id_mensaje;
                     char ip_destinatario[256];
                     int puerto_destinatario;
                     int sd;
@@ -280,6 +281,10 @@ void tratar_peticion (void *s){
                     //obtenemos el usuario destinatario
                     if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
                     strcpy(destinatario,buffer);
+
+                    //obtenemos el mensaje
+                    if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
+                    strcpy(mensaje,buffer);
 
 
                     int both_connected =  comprobarAmbosConectados(cabeza,remitente,destinatario);
@@ -323,6 +328,29 @@ void tratar_peticion (void *s){
                                 printf("Error en el send message de hola mi bro\n");
                         }
 
+                        strcpy(buffer,remitente);
+                        a = sendMessage(sock, buffer, strlen(buffer)+1);
+                        if (a == -1){
+                                printf("Error en el send message de hola mi bro\n");
+                        }
+
+
+                        
+                        strcpy(buffer,"0");
+
+                        a = sendMessage(sock, buffer, strlen(buffer)+1);
+                        if (a == -1){
+                                printf("Error en el send message de hola mi bro\n");
+                        }
+                        
+
+                        strcpy(buffer,mensaje);
+
+                        a = sendMessage(sock, buffer, strlen(buffer)+1);
+                        if (a == -1){
+                                printf("Error en el send message de hola mi bro\n");
+                        }
+
                         /*
                         
 
@@ -361,13 +389,7 @@ void tratar_peticion (void *s){
 
                     if (both_connected == 1){
                         printf("Solo el emisor está conectado\n");
-                    }
-
                     
-                    //obtenemos el mensaje
-                    if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
-                    strcpy(mensaje,buffer);
-
                     //comprobar si existe el usuario
                     int existe = nodoExiste(cabeza,destinatario);
 
@@ -381,8 +403,12 @@ void tratar_peticion (void *s){
                         strcpy(buffer,"error");
                     }
 
+                    }
+
                     //enviamos confirmación
-                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}   
+                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}
+
+
                 }
                 if (strcmp(buffer,"EXIT") == 0){
                         break;
