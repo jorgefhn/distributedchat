@@ -319,6 +319,27 @@ int comprobarAmbosConectados(tnodo *cabeza,char* remitente,char* destinatario){
 
 }
 
+
+int obtenerIpYPuerto(tnodo *cabeza,char* destinatario,char *ip_destinatario,int* puerto_destinatario){
+    tnodo *actual = cabeza;
+
+    while(actual != NULL){ //Mientras cabeza no sea NULL
+
+        if (strcmp(actual->user,destinatario) == 0){ //busca al destinatario
+            strcpy(ip_destinatario,actual->ip);
+            *puerto_destinatario = actual->puerto;
+        }
+
+        
+        actual = actual -> sig;
+
+    }
+
+    return 0;
+}
+
+
+
 //----------------------------------------------------------------
 
 

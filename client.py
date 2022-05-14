@@ -341,6 +341,32 @@ class client:
 
             if id == "SEND MESSAGE": 
                 #se tiene que conectar al socket
+                sock2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock2.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            
+                server_address = (ip, 0)
+
+                sock2.bind(server_address)
+                
+                ip = str(sock2.getsockname()[0])
+                puerto = str(sock2.getsockname()[1])
+
+                print('voy a escuchar en  port ',server_address)
+
+                print("Puerto del socket: ",sock2.getsockname()[1])
+
+                #enviamos la ip
+                sock.sendall(ip.encode()+b'\0')
+
+                #enviamos el puerto 
+                sock.sendall(puerto.encode()+b'\0')
+
+                sock2.listen(1)
+
+                hilo = threading.Thread(target=client.listen_s)
+                hilo.start()
+
+
             print("Closing socket")
             sock.close()
 
