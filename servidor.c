@@ -263,6 +263,14 @@ void tratar_peticion (void *s){
                     char remitente[256];
                     char destinatario[256];
                     char mensaje[256];
+                    int sd;
+                    char ip[256];
+                    char mensaje[1024];
+                    char id_mensaje[256];
+                    int puerto;
+                    int sd;
+                    struct sockaddr_in server_addr;
+                    struct hostent *hp;
                    
                     //comprobamos si ambos usuarios están conectados
                     //enviamos confirmación
@@ -277,37 +285,99 @@ void tratar_peticion (void *s){
                     if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
                     strcpy(destinatario,buffer);
 
-
-                    int both_connected =  comprobarAmbosConectados(cabeza,remitente,destinatario);
-                    if (both_connected == 2){
-                        printf("Ambos usuarios están conectados\n");
-                        
-                    }
-
-                    if (both_connected == 1){
-                        printf("Solo el emisor está conectado\n");
-                    }
-
-                    
                     //obtenemos el mensaje
                     if ((readLine(sc, buffer, 256)==-1)){printf("Error en el servidor");break;}
                     strcpy(mensaje,buffer);
 
-                    //comprobar si existe el usuario
-                    int existe = nodoExiste(cabeza,destinatario);
+                    int both_connected =  comprobarAmbosConectados(cabeza,remitente,destinatario);
+                    if (both_connected == 2){
 
-                    //Metemos el mensaje al la lista del usuario si existe
-                    if (existe == 1){
-                        sendMessageEnLista(cabeza,destinatario,remitente,mensaje);
-                        strcpy(buffer,"0");
-                    } 
+                        int n = numItemsMessage(cabeza,destinatario);
+                        printf("Número de mensajes pendientes: %d\n",n);
+                        //leer la lista de mensajes pendientes
 
-                    if (existe == 0){ //no existe el usuario
-                        strcpy(buffer,"error");
+
+                        for(int i=0; i<n; i++){
+                        printf("Ambos usuarios están conectados\n");
+                        int sock = socket(AF_INET, SOCK_STREAM, 0);
+
+                        sd = socket(AF_INET, SOCK_STREAM, 0);
+                        if (sd == 1) {
+                                printf("Error en socket\n");
+                        }
+                        bzero((char *)&server_addr, sizeof(server_addr));
+                        
+                        hp = gethostbyname(ip); //en ip hay un string con la ip del cliente
+                        if (hp == NULL) {
+                                printf("Error en gethostbyname\n");
+                        }
+                        
+                        memcpy (&(server_addr.sin_addr), hp->h_addr, hp->h_length);
+
+                        server_addr.sin_family = AF_INET;
+                        server_addr.sin_port = htons(puerto);
+
+                        int c = connect(sock, (struct sockaddr *) &server_addr,  sizeof(server_addr));
+                        if (c == -1){
+                                printf("Error en connect\n");
+                        }
+
+                        //enviamos confirmación de que ambos están conectados 
+                        strcpy(buffer,"SEND MESSAGE");
+
+                        if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}
+
+                        strcpy(buffer,usuario_remitente);
+
+                        //iterar sobre la lista de mensajes cuyo destinatario es CONECTADO
+                        int a = sendMessage(sock, buffer, strlen(buffer)+1);
+                        if (a == -1){
+                                printf("Error en el send message de hola mi bro\n");
+                        }
+                        strcpy(buffer,id_mensaje);
+
+                        a = sendMessage(sock, buffer, strlen(buffer)+1);
+                        if (a == -1){
+                                printf("Error en el send message de hola mi bro\n");
+                        }
+
+                        strcpy(buffer,mensaje);
+
+
+                        a = sendMessage(sock, buffer, strlen(buffer)+1);
+                        if (a == -1){
+                                printf("Error en el send message de hola mi bro\n");
+                        }
+                        imprimirLista(cabeza);
+
+                        //send_message_ack
+                        close(sock); //cerramos esta conexión
+
+
+
                     }
 
-                    //enviamos confirmación
-                    if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}   
+                    if (both_connected == 1){
+                        printf("Solo el emisor está conectado\n");
+                        //comprobar si existe el usuario
+                        int existe = nodoExiste(cabeza,destinatario);
+
+                        //Metemos el mensaje al la lista del usuario si existe
+                        if (existe == 1){
+                                sendMessageEnLista(cabeza,destinatario,remitente,mensaje);
+                                strcpy(buffer,"0");
+                        } 
+
+                        if (existe == 0){ //no existe el usuario
+                                strcpy(buffer,"error");
+                        }
+
+                        //enviamos confirmación
+                        if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}
+
+                    }
+
+                       
                 }
                 if (strcmp(buffer,"EXIT") == 0){
                         break;

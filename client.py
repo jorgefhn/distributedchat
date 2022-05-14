@@ -337,8 +337,10 @@ class client:
 
             #Recibimos la confirmación que en este caso es el id asociado al mensaje o error si no existe
             id = client.readResponse(sock) #respuesta
-            print("Confirmación recibida ",id)
+            print("Confirmación recibida ",id) #aquí deberíamos tener una comprobación de si ambos están conectados. Si lo están, que se conecte al socket
 
+            if id == "SEND MESSAGE": 
+                #se tiene que conectar al socket
             print("Closing socket")
             sock.close()
 
