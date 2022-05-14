@@ -54,19 +54,25 @@ class client:
 
                 #recibe el la operación
                 id_operacion = client.readResponse(connection)
+                if(id_operacion == "SEND MESSAGE"):
+                    #recibe un mensaje
+                    #recibe el remitente
+                    user_sender = client.readResponse(connection)
 
-                #recibe el remitente
-                user_sender = client.readResponse(connection)
+                    #recibe el id del del mensaje
+                    id = client.readResponse(connection)
 
-                #recibe el id del del mensaje
-                id = client.readResponse(connection)
+                    #recibe el mensaje    
+                    mensaje = client.readResponse(connection)
 
-                #recibe el mensaje    
-                mensaje = client.readResponse(connection)
-
-                print("MESSAGE "+ id_operacion +" FROM "+ user_sender +":\n"+ mensaje +"\nEND\n")
+                    print("MESSAGE "+ id +" FROM "+ user_sender +":\n"+ mensaje +"\nEND")
+                else:
+                    #recibe el ack
+                    #recibe el id del del mensaje
+                    id = client.readResponse(connection)
+                    print("ACK OF MESSAGE "+ id +"RECEIVED")
             
-
+                print("c>", end="")
                 
 
 
