@@ -155,7 +155,7 @@ class client:
         global usuario_conectado, sock2, hilo
 
         #comprobamos que ningún usuario esté ya conectado 
-        if usuario_conectado == user:
+        if usuario_conectado != "": #cubre también el caso de que el intentes conectar otra vez al mismo usuario
             return client.RC.ERROR2
     
         try:
@@ -283,6 +283,8 @@ class client:
             if r == "0":
                 id = client.readResponse(sock) #respuesta
                 return client.RC.OK, id
+
+            
             else:
                 return client.RC.ERROR1, id
 
@@ -296,10 +298,7 @@ class client:
             sock.close()
             return client.RC.ERROR2, id
 
-    @staticmethod
-    def  sendAttach(user,  file,  message) :
-        #  Write your code here
-        return client.RC.ERROR
+    
 
     @staticmethod
     def shell():
@@ -374,7 +373,6 @@ class client:
                             formateado = subprocess.check_output(['python3','ws-space-client.py',message])#formatea el mensaje
                             formateado = formateado.decode()[1:-2] #para el output
                             
-                            print("Mensaje formateado:",formateado)
                             var, id = client.send(line[1], formateado,host,port)
                             var = var.value
                             if var == 0: #ok
@@ -386,14 +384,7 @@ class client:
                         else :
                             print("Syntax error. Usage: SEND <userName> <message>")
 
-                    elif(line[0]=="SENDATTACH") :
-                        if (len(line) >= 4) :
-                            #  Remove first two words
-                            message = ' '.join(line[3:])
-                            client.sendAttach(line[1], line[2], message)
-                        else :
-                            print("Syntax error. Usage: SENDATTACH <userName> <filename> <message>")
-
+                    
                     elif(line[0]=="QUIT") :
                         if (len(line) == 1) :
                             break
