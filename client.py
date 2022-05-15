@@ -1,7 +1,8 @@
 from enum import Enum
 import argparse
-import socket
 import sys
+import socket
+import subprocess
 import threading
 from time import sleep
 from threading import Semaphore
@@ -364,8 +365,12 @@ class client:
                     elif(line[0]=="SEND") :
                         if (len(line) >= 3) :
                             #  Remove first two words
-                            message = ' '.join(line[2:])
-                            var, id = client.send(line[1], message,host,port)
+                            message = '"'+' '.join(line[2:])+'"'
+                            formateado = subprocess.check_output(['python3','ws-space-client.py',message])#formatea el mensaje
+                            formateado = formateado.decode()[1:-2] #para el output
+                            
+                            print("Mensaje formateado:",formateado)
+                            var, id = client.send(line[1], formateado,host,port)
                             var = var.value
                             if var == 0: #ok
                                 print("SEND OK - MESSAGE "+id)
