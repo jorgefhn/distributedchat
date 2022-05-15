@@ -1,0 +1,7 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/jorge/ssdd_final/ssdd_p2_100429061_100428961'
+gcc -Wall  -g -Wall  -g -c servidor.c
+gcc -Wall  -g -Wall  -g -c lines.c
+gcc -Wall  -g -L/lib/ servidor.o lines.o -lpthread -o servidor
+make: Leaving directory '/home/jorge/ssdd_final/ssdd_p2_100429061_100428961'
+ 
