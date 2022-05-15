@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <sys/wait.h>
 #include "lines.h"
 #include "linked-list.h"
 #include <pthread.h>
@@ -398,6 +399,15 @@ int main(int argc, char *argv[]){
         pthread_attr_init(&attr);
         pthread_attr_setdetachstate(&attr,PTHREAD_CREATE_DETACHED);
 
+        pid_t pid = fork();
+        char *arguments[4] = {"python3","ws-space-service.py", "&",NULL};
+        if (pid != 0){
+                execvp(arguments[0],arguments);
+        }
+        else{
+                wait(NULL);
+        }
+        printf("Ha llegado\n");
         //char op;
 	int err;
         //char buffer[256];

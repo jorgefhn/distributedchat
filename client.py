@@ -304,6 +304,8 @@ class client:
         host = sys.argv[2]
         port = sys.argv[4]
 
+        #subprocess.Popen(['python3','ws-space-service.py']) #corre el servicio en background
+
         while (True) :
             try :
                 command = input("c> ")
