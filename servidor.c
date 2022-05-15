@@ -85,6 +85,7 @@ void tratar_peticion (void *s){
                         }
 
                         //enviamos el resultado
+                        strcat(buffer, "\0");
                         if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
                 
                 }
@@ -113,6 +114,7 @@ void tratar_peticion (void *s){
                     }
 
                     //enviamos el resultado
+                    strcat(buffer, "\0");
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
                 }
 
@@ -145,6 +147,7 @@ void tratar_peticion (void *s){
                         printf("s> CONNECT %s FAIL\n",buffer);
                     }
                     //enviamos confirmación
+                    strcat(buffer, "\0");
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                     //Cambiamos los valores del usuario si existe y si está conectado
@@ -179,10 +182,12 @@ void tratar_peticion (void *s){
                                         //message ACK
                                         //enviamos la operación al hilo del cliente
                                         strcpy(buffer,"SEND MESS ACK");
+                                        strcat(buffer, "\0");
                                         if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                         //enviamos el id del mensaje
                                         strcpy(buffer,mensaje);
+                                        strcat(buffer, "\0");
                                         if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                         close(sock); //cerramos la conexion
@@ -190,18 +195,22 @@ void tratar_peticion (void *s){
                                 else{
                                         //enviamos la operación al hilo del cliente
                                         strcpy(buffer,"SEND MESSAGE");
+                                        strcat(buffer, "\0");
                                         if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
                                         
                                         //enviamos el remitente
                                         strcpy(buffer,usuario_remitente);
+                                        strcat(buffer, "\0");
                                         if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                         //enviamos el id del mensaje
                                         strcpy(buffer,id_mensaje);
+                                        strcat(buffer, "\0");
                                         if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
                                         
                                         //enviamos el mensaje
                                         strcpy(buffer,mensaje);
+                                        strcat(buffer, "\0");
                                         if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                         //cambiamos el id del úlmtimo mensaje recibido
@@ -223,10 +232,12 @@ void tratar_peticion (void *s){
 
                                         //enviamos la operación al hilo del cliente
                                         strcpy(buffer,"SEND MESS ACK");
+                                        strcat(buffer, "\0");
                                         if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                         //enviamos el id del mensaje
                                         strcpy(buffer,id_mensaje);
+                                        strcat(buffer, "\0");
                                         if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                         close(sock); //cerramos la conexion
@@ -266,6 +277,7 @@ void tratar_peticion (void *s){
                     }
 
                     //enviamos confirmación
+                    strcat(buffer, "\0");
                     if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error en envío\n");break;}
                 }
 
@@ -301,6 +313,7 @@ void tratar_peticion (void *s){
  
                     if (existe1 == 1 && existe2 == 1){
                         //metemos el mesaje en la lista de mensajes del destinatario y sacamos el id del mensaje
+                        strcat(buffer, "\0");
                         unsigned int id = sendMessageEnLista(cabeza,destinatario,remitente,mensaje);
                         
                         //comprobamos que el destinatario esté conectado para saber si enviarle el mensaje
@@ -318,19 +331,23 @@ void tratar_peticion (void *s){
 
                                 //enviamos la operación al hilo del cliente
                                 strcpy(buffer,"SEND MESSAGE");
+                                strcat(buffer, "\0");
                                 if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                 //enviamos el remitente
                                 strcpy(buffer,remitente);
+                                strcat(buffer, "\0");
                                 if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                 //enviamos el id del mensaje
                                 strcpy(buffer,id_mensaje);
+                                strcat(buffer, "\0");
                                 if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
                                 
                                 
                                 //enviamos el mensaje
                                 strcpy(buffer,mensaje);
+                                strcat(buffer, "\0");
                                 if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                 //actualizamos el último mensaje recibido
@@ -351,10 +368,12 @@ void tratar_peticion (void *s){
 
                                 //enviamos la operación al hilo del cliente
                                 strcpy(buffer,"SEND MESS ACK");
+                                strcat(buffer, "\0");
                                 if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                 //enviamos el id del mensaje
                                 strcpy(buffer,id_mensaje);
+                                strcat(buffer, "\0");
                                 if((sendMessage(sock, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
 
                                 close(sock); //cerramos la conexion
@@ -365,15 +384,18 @@ void tratar_peticion (void *s){
                     
                         strcpy(buffer,"0");
                         //enviamos confirmación
+                        strcat(buffer, "\0");
                         if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
                         //enviamos el id
                         sprintf(id_mensaje,"%d",id);
                         strcpy(buffer, id_mensaje);
+                        strcat(buffer, "\0");
                         if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
                     }
                     else{
                         strcpy(buffer,"1");
                         //enviamos confirmación
+                        strcat(buffer, "\0");
                         if ((sendMessage(sc, buffer, strlen(buffer)+1) == -1)){printf("Error\n");break;}
                     }
 

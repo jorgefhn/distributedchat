@@ -122,6 +122,9 @@ class client:
     @staticmethod
     def unregister(user,host,port):
 
+        if usuario_conectado == user:
+            return client.RC.ERROR2
+
         try:
             sock = client.openSocket(host,port)
             #mandamos petición de registro
