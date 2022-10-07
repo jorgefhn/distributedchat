@@ -1,3 +1,5 @@
+Chat distribuido escrito en C y Python basado en el modelo Cliente-Servidor.
+
 Compilación: 
 
 Para compilar los archivos, basta con ejecutar el comando make
