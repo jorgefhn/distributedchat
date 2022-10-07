@@ -1,5 +1,5 @@
 #include "nodo.h"
-#include "linked-list.c"
+#include "linked-list.c" 
 
 int insertarEnLista (tpuntero *cabeza, char* user);
 int imprimirLista (tnodo *cabeza);
