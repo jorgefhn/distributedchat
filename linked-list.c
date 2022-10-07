@@ -50,7 +50,7 @@ int insertarEnLista(tpuntero *cabeza, char* user){
     return 0;
 }
 
-int borrarLista(tpuntero *cabeza){ 
+int borrarLista(tpuntero *cabeza){  
     tpuntero actual; //Puntero auxiliar para eliminar correctamente la lista
   
     while(*cabeza != NULL){ //Mientras cabeza no sea NULL
